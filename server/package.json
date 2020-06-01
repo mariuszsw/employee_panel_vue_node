@@ -1,0 +1,39 @@
+{
+    "name": "server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node ./index.js",
+        "server": "node ./bin/server.js",
+        "lint": "NODE_ENV=development eslint './**'",
+        "dev": "NODE_ENV=development nodemon ./bin/server.js",
+        "db-undo-migrate": "./node_modules/.bin/sequelize db:migrate:undo:all",
+        "db-migrate": "./node_modules/.bin/sequelize db:migrate",
+        "db-seed": "./node_modules/.bin/sequelize db:seed:all",
+        "db-drop": "./node_modules/.bin/sequelize db:drop",
+        "db-create": "./node_modules/.bin/sequelize db:create",
+        "db-setup": "npm run db-undo-migrate && npm run db-migrate && npm run db-seed",
+        "db-setup-fresh": "npm run db-drop && npm run db-create && npm run db-migrate && npm run db-seed",
+        "test": "NODE_ENV=test jest --verbose --runInBand --detectOpenHandles",
+        "testp": "NODE_ENV=test jest --verbose --runInBand --detectOpenHandles --",
+        "test-pipeline": "NODE_ENV=test jest --verbose --runInBand --detectOpenHandles"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^4.0.1",
+        "bluebird": "^3.7.2",
+        "body-parser": "^1.19.0",
+        "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "express-validator": "^6.5.0",
+        "http-status-codes": "^1.4.0",
+        "joi": "^14.3.1",
+        "jsonwebtoken": "^8.5.1",
+        "mysql2": "^2.1.0",
+        "sequelize": "^5.21.10"
+    }
+}
