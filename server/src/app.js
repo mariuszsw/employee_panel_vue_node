@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { sequelize } = require('../models');
 
-const LoginValidator = require('../validators/register');
 const router = require('../routes')();
 
 const app = express();

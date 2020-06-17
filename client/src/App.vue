@@ -1,7 +1,7 @@
 <template>
     <v-app>
-        <app-header />
         <v-content>
+            <app-header />
             <v-container>
                 <router-view></router-view>
             </v-container>
@@ -11,10 +11,20 @@
 
 <script>
 import Header from './components/Header.vue';
+import { mapActions } from 'vuex';
+
 export default {
     name: 'app',
     components: {
         'app-header': Header
+    },
+    methods: {
+        ...mapActions({
+            tryAutoLogin: 'tryAutoLogin'
+        })
+    },
+    created() {
+        this.tryAutoLogin();
     }
 };
 </script>

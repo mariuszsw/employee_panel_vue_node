@@ -6,7 +6,7 @@
                     <v-col cols="12" sm="8" md="4">
                         <v-card class="elevation-12">
                             <v-toolbar color="primary" dark flat>
-                                <v-toolbar-title>Login form</v-toolbar-title>
+                                <v-toolbar-title>Login Panel</v-toolbar-title>
                                 <v-spacer></v-spacer>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
@@ -23,7 +23,7 @@
                                         prepend-icon="person"
                                         type="text"
                                         v-model="email"
-                                    ></v-text-field>
+                                    />
 
                                     <v-text-field
                                         id="password"
@@ -32,13 +32,13 @@
                                         prepend-icon="lock"
                                         type="password"
                                         v-model="password"
-                                    ></v-text-field>
+                                    />
                                     <v-alert :value="validationerror" color="error" v-html="error"></v-alert>
                                 </v-form>
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn color="primary" @click="login">Login</v-btn>
+                                <v-btn color="primary" @click="onLogin">Login</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-col>
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import AuthService from '@/services/AuthService';
+import { mapActions } from 'vuex';
 
 export default {
     props: {
@@ -65,21 +65,12 @@ export default {
         };
     },
     methods: {
-        async login() {
-            try {
-                await AuthService.login({
-                    email: this.email,
-                    password: this.password
-                });
-                this.validationerror = false;
-            } catch (error) {
-                const { data } = error.response;
+        ...mapActions({
+            login: 'login'
+        }),
 
-                if (data) {
-                    this.error = data.error;
-                    this.validationerror = true;
-                }
-            }
+        onLogin() {
+            this.login({ email: this.email, password: this.password });
         }
     }
 };

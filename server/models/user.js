@@ -21,10 +21,18 @@ module.exports = (sequelize, DataTypes) => {
         'User',
         {
             id: {
-                allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: DataTypes.INTEGER
+            },
+
+            name: {
+                allowNull: false,
+                type: DataTypes.STRING
+            },
+            surname: {
+                allowNull: false,
+                type: DataTypes.STRING
             },
             email: {
                 allowNull: false,
@@ -44,14 +52,24 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DATE
             }
         },
-
         {
+            defaultScope: {
+                attributes: { exclude: ['password'] }
+            },
             hooks: {
                 beforeSave: hashPassword
             }
         }
     );
-    User.associate = function (models) {};
+
+    User.associate = function (models) {
+        User.belongsToMany(models.Role, {
+            as: 'roles',
+            through: 'user_roles',
+            foreignKey: 'userId',
+            otherKey: 'roleId'
+        });
+    };
 
     User.prototype.comparePassword = function (password) {
         return bcrypt.compareSync(password, this.password);

@@ -5,6 +5,7 @@ import App from './App.vue';
 import Vuetify from 'vuetify';
 import VueRouter from 'vue-router';
 import 'vuetify/dist/vuetify.min.css';
+import store from '@/store/store';
 
 Vue.config.productionTip = false;
 
@@ -13,16 +14,12 @@ Vue.use(Vuetify, {
 });
 Vue.use(VueRouter);
 
-import routes from './routes';
+import { router } from './router';
 import vuetify from './plugins/vuetify';
-
-const router = new VueRouter({
-    routes,
-    mode: 'history'
-});
 
 new Vue({
     router,
+    store,
     vuetify,
     render: h => h(App)
 }).$mount('#app');

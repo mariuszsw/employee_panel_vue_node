@@ -6,7 +6,7 @@
                     <v-col cols="12" sm="8" md="4">
                         <v-card class="elevation-12">
                             <v-toolbar color="primary" dark flat>
-                                <v-toolbar-title>Register form</v-toolbar-title>
+                                <v-toolbar-title>Register Employeeform</v-toolbar-title>
                                 <v-spacer></v-spacer>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
@@ -18,16 +18,41 @@
                             <v-card-text>
                                 <v-form v-model="isValid">
                                     <v-text-field
+                                        label="Employee Name"
+                                        name="name"
+                                        prepend-icon="person"
+                                        type="text"
+                                        required
+                                        v-model="credentials.name"
+                                        :error-messages="nameErrors"
+                                        @input="$v.credentials.name.$touch()"
+                                        @blur="$v.credentials.name.$touch()"
+                                        @keyup="clearServerErrors('name')"
+                                    ></v-text-field>
+                                    <v-text-field
+                                        label="Employee Surname"
+                                        name="surname"
+                                        prepend-icon="person"
+                                        type="text"
+                                        required
+                                        v-model="credentials.surname"
+                                        :error-messages="surnameErrors"
+                                        @input="$v.credentials.surname.$touch()"
+                                        @blur="$v.credentials.surname.$touch()"
+                                        @keyup="clearServerErrors('surname')"
+                                    ></v-text-field>
+
+                                    <v-text-field
                                         v-model="credentials.email"
                                         label="Email"
                                         name="email"
-                                        prepend-icon="person"
+                                        prepend-icon="email"
                                         type="text"
                                         required
                                         :error-messages="emailErrors"
                                         @input="$v.credentials.email.$touch()"
                                         @blur="$v.credentials.email.$touch()"
-                                        @keyup="clearServerErrors('login')"
+                                        @keyup="clearServerErrors('email')"
                                     />
 
                                     <v-text-field
@@ -39,9 +64,7 @@
                                         type="password"
                                         required
                                         :error-messages="passwordErrors"
-                                        @input="
-                                            $v.credentials.password.$touch()
-                                        "
+                                        @input="$v.credentials.password.$touch()"
                                         @blur="$v.credentials.password.$touch()"
                                         @keyup="clearServerErrors('password')"
                                     />
@@ -86,6 +109,16 @@ export default {
     },
     validations: {
         credentials: {
+            name: {
+                required,
+                minLength: minLength(2),
+                maxLength: maxLength(40)
+            },
+            surname: {
+                required,
+                minLength: minLength(2),
+                maxLength: maxLength(40)
+            },
             email: { required, email },
             password: {
                 required,
@@ -97,10 +130,14 @@ export default {
     data() {
         return {
             credentials: {
+                name: '',
+                surname: '',
                 email: '',
                 password: ''
             },
             serverErrors: {
+                name: [],
+                surname: [],
                 email: [],
                 password: []
             },
@@ -111,6 +148,30 @@ export default {
         };
     },
     computed: {
+        nameErrors() {
+            const errors = [];
+            if (!this.$v.credentials.name.$dirty) return errors;
+            (!this.$v.credentials.name.minLength ||
+                !this.$v.credentials.name.maxLength) &&
+                errors.push('Name must be 2-40 characters in length');
+            !this.$v.credentials.name.required &&
+                errors.push('Name is required');
+            this.serverErrors.name.length &&
+                this.serverErrors.name.forEach(err => errors.push(err));
+            return errors;
+        },
+        surnameErrors() {
+            const errors = [];
+            if (!this.$v.credentials.surname.$dirty) return errors;
+            (!this.$v.credentials.surname.minLength ||
+                !this.$v.credentials.surname.maxLength) &&
+                errors.push('Surname must be 2-40 characters in length');
+            !this.$v.credentials.surname.required &&
+                errors.push('Surname is required');
+            this.serverErrors.surname.length &&
+                this.serverErrors.surname.forEach(err => errors.push(err));
+            return errors;
+        },
         emailErrors() {
             const errors = [];
             if (!this.$v.credentials.email.$dirty) return errors;
@@ -141,6 +202,7 @@ export default {
             try {
                 await AuthService.register(this.credentials);
                 this.validationerror = false;
+                this.$router.push('/login');
             } catch (error) {
                 if (error.response.status === 400) {
                     error.response.data.errors.map(error => {
