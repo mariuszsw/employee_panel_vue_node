@@ -6,9 +6,7 @@ import Vuetify from 'vuetify';
 import VueRouter from 'vue-router';
 import 'vuetify/dist/vuetify.min.css';
 import store from '@/store/store';
-import Notifications from 'vue-notification';
 
-Vue.use(Notifications);
 Vue.config.productionTip = false;
 
 Vue.use(Vuetify, {
