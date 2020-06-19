@@ -13,14 +13,14 @@ class AuthController {
 
     async register(req, res) {
         const { roles } = req.body;
-
+        console.log(roles);
         const user = await User.create({
             ...req.body,
             createdAt: new Date(),
             updatedAt: new Date()
         });
 
-        if (roles.lenght) {
+        if (roles && roles.length) {
             const userRoles = await Role.findAll({
                 where: {
                     name: {
@@ -91,7 +91,6 @@ class AuthController {
                 token: this.jwtRegUser(user.toJSON())
             });
         } catch (error) {
-            console.error(error);
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
                 error: 'Error'
             });

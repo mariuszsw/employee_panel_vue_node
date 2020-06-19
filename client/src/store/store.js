@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import AuthService from '@/services/AuthService';
+// import AuthService from '@/services/AuthService';
 import { router } from '../router';
 Vue.use(Vuex);
 
@@ -50,10 +50,8 @@ export default new Vuex.Store({
     },
 
     actions: {
-        async login({ commit, dispatch }, authData) {
+        async login({ commit, dispatch }, data) {
             try {
-                const response = await AuthService.login(authData);
-                const data = response.data;
                 const now = new Date();
                 const expirationDate = new Date(now.getTime() + 600 * 1000); //take from backend
 
@@ -64,7 +62,6 @@ export default new Vuex.Store({
                 commit('setRoles', data.user.roles);
 
                 dispatch('setLogoutTimer', 600);
-                router.push('/user');
             } catch (error) {
                 console.error(error);
             }
