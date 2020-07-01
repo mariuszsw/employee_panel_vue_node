@@ -6,18 +6,17 @@ module.exports = async (req, res, next) => {
 
     if (!user) {
         return res.status(HttpStatus.FORBIDDEN).send({
-            message: 'Require Admin Role!'
+            message: 'Require User Role!'
         });
     }
 
-    const roles = await user.getRoles();
-    const isAdmin = roles.find((r) => r.name === 'admin');
+    const isUser = await user.isUser();
 
-    if (isAdmin) {
+    if (isUser) {
         return next();
     }
 
     return res.status(HttpStatus.FORBIDDEN).send({
-        message: 'Require Admin Role!'
+        message: 'Require User Role!'
     });
 };

@@ -13,6 +13,4 @@ app.use(cors());
 
 app.use(router);
 
-sequelize.sync().then(() => {
-    app.listen(port, () => console.log(`Your App listening on port ${port}`));
-});
+app.listen(port, () => console.log(`Your App listening on port ${port}`));

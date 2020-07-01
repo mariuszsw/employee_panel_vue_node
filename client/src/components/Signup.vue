@@ -6,7 +6,7 @@
                     <v-col cols="12" sm="8" md="4">
                         <v-card class="elevation-12">
                             <v-toolbar color="primary" dark flat>
-                                <v-toolbar-title>Register Employeeform</v-toolbar-title>
+                                <v-toolbar-title>Register Employee</v-toolbar-title>
                                 <v-spacer></v-spacer>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
@@ -29,6 +29,7 @@
                                         @blur="$v.credentials.name.$touch()"
                                         @keyup="clearServerErrors('name')"
                                     ></v-text-field>
+
                                     <v-text-field
                                         label="Employee Surname"
                                         name="surname"
@@ -41,6 +42,34 @@
                                         @blur="$v.credentials.surname.$touch()"
                                         @keyup="clearServerErrors('surname')"
                                     ></v-text-field>
+
+                                    <v-menu
+                                        ref="birthdateButton"
+                                        v-model="birthdateButton"
+                                        :close-on-content-click="false"
+                                        transition="scale-transition"
+                                        offset-y
+                                        min-width="290px"
+                                    >
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-text-field
+                                                v-model="credentials.birthdate"
+                                                label="Birthday date"
+                                                prepend-icon="event"
+                                                readonly
+                                                v-bind="attrs"
+                                                v-on="on"
+                                            ></v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                            name="birthdate"
+                                            ref="picker"
+                                            v-model="credentials.birthdate"
+                                            :max="new Date().toISOString().substr(0, 10)"
+                                            min="1900-01-01"
+                                            @change="save"
+                                        ></v-date-picker>
+                                    </v-menu>
 
                                     <v-text-field
                                         v-model="credentials.email"
@@ -64,7 +93,9 @@
                                         type="password"
                                         required
                                         :error-messages="passwordErrors"
-                                        @input="$v.credentials.password.$touch()"
+                                        @input="
+                                            $v.credentials.password.$touch()
+                                        "
                                         @blur="$v.credentials.password.$touch()"
                                         @keyup="clearServerErrors('password')"
                                     />
@@ -132,6 +163,7 @@ export default {
             credentials: {
                 name: '',
                 surname: '',
+                birthdate: '',
                 email: '',
                 password: ''
             },
@@ -144,7 +176,8 @@ export default {
             errorMessage: '',
             error: null,
             validationerror: false,
-            isValid: true
+            isValid: true,
+            birthdateButton: false
         };
     },
     computed: {
@@ -217,8 +250,17 @@ export default {
                 }
             }
         },
+
         clearServerErrors(type) {
             this.serverErrors[type] = [];
+        },
+        save(credentials) {
+            this.$refs.birthdateButton.save(credentials.birthdate);
+        }
+    },
+    watch: {
+        birthdateButton(val) {
+            val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'));
         }
     }
 };

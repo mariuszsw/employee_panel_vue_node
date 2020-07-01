@@ -96,6 +96,12 @@ class AuthController {
             });
         }
     }
+
+    async me(req, res) {
+        const loggedUser = await User.findByPk(req.userId);
+
+        return res.send(loggedUser);
+    }
 }
 
 module.exports = AuthController;

@@ -10,13 +10,7 @@
                                 <v-spacer></v-spacer>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
-                                        <v-btn
-                                            :href="source"
-                                            icon
-                                            large
-                                            target="_blank"
-                                            v-on="on"
-                                        ></v-btn>
+                                        <v-btn :href="source" icon large target="_blank" v-on="on"></v-btn>
                                     </template>
                                     <span>Source</span>
                                 </v-tooltip>
@@ -30,8 +24,7 @@
                                         color="red"
                                         type="error"
                                         v-if="errorMessage.length"
-                                        >{{ errorMessage }}</v-alert
-                                    >
+                                    >{{ errorMessage }}</v-alert>
                                     <v-text-field
                                         label="Email"
                                         name="email"
@@ -63,21 +56,12 @@
                                         @blur="$v.credentials.password.$touch()"
                                         @keyup="clearServerErrors('password')"
                                     />
-                                    <v-alert
-                                        :value="validationerror"
-                                        color="error"
-                                        v-html="error"
-                                    ></v-alert>
+                                    <v-alert :value="validationerror" color="error" v-html="error"></v-alert>
                                 </v-form>
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn
-                                    color="primary"
-                                    :disabled="!isValid"
-                                    @click="onLogin"
-                                    >Login</v-btn
-                                >
+                                <v-btn color="primary" :disabled="!isValid" @click="onLogin">Login</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-col>

@@ -6,9 +6,17 @@
 
         <v-toolbar-items>
             <v-btn v-if="!isAuthenticated" text dark router to="/login">Login</v-btn>
-            <v-btn v-if="showAdminBoard" text dark router to="/signup">Sign Up</v-btn>
+            <v-btn v-if="isAdminBoard" text dark router to="/signup">Sign Up</v-btn>
             <v-btn v-if="isAuthenticated" text dark router to="/user">Profil</v-btn>
-            <v-btn v-if="showAdminBoard" text dark router to="/admin">Admin Board</v-btn>
+            <v-btn v-if="isAdminBoard" text dark router to="/admin">Admin Board</v-btn>
+            <v-btn
+                v-if="isUserBoard"
+                text
+                dark
+                router
+                :to="{ path: '/users/' + this.currentUser.id}"
+            >User Board</v-btn>
+
             <v-btn v-if="isAuthenticated" text dark @click="onLogout">Log Out</v-btn>
         </v-toolbar-items>
     </v-toolbar>
@@ -22,11 +30,16 @@ export default {
         ...mapGetters({
             isAuthenticated: 'isAuthenticated',
             isAdmin: 'isAdmin',
+            isUser: 'isUser',
             currentUser: 'getUser'
         }),
 
-        showAdminBoard() {
-           return this.currentUser && this.isAdmin;
+        isAdminBoard() {
+            return this.currentUser && this.isAdmin;
+        },
+
+        isUserBoard() {
+            return this.currentUser && this.isUser;
         }
     },
     methods: {

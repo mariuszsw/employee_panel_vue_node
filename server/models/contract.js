@@ -17,8 +17,8 @@ function hashPassword(user, options) {
 }
 
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define(
-        'User',
+    const Contract = sequelize.define(
+        'Contract',
         {
             id: {
                 autoIncrement: true,
@@ -30,22 +30,15 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 type: DataTypes.STRING
             },
-            surname: {
+
+            userId: {
+                type: DataTypes.INTEGER,
                 allowNull: false,
-                type: DataTypes.STRING
-            },
-            birthdate: {
-                allowNull: false,
-                type: DataTypes.DATEONLY
-            },
-            email: {
-                allowNull: false,
-                type: DataTypes.STRING,
-                unique: true
-            },
-            password: {
-                allowNull: false,
-                type: DataTypes.STRING
+                onDelete: 'CASCADE',
+                references: {
+                    model: 'User',
+                    key: 'id'
+                }
             },
             createdAt: {
                 allowNull: false,
@@ -66,30 +59,11 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    User.associate = function (models) {
-        User.belongsToMany(models.Role, {
-            as: 'roles',
-            through: 'UserRoles',
-            foreignKey: 'userId',
-            otherKey: 'roleId'
+    Contract.associate = function (models) {
+        Contract.belongsTo(models.User, {
+            as: 'user'
         });
     };
 
-    User.prototype.comparePassword = function (password) {
-        return bcrypt.compareSync(password, this.password);
-    };
-
-    User.prototype.isAdmin = async function () {
-        const roles = await this.getRoles();
-
-        return roles.find((r) => r.name === 'admin');
-    };
-
-    User.prototype.isUser = async function () {
-        const roles = await this.getRoles();
-
-        return !!roles.find((r) => r.name === 'user');
-    };
-
-    return User;
+    return Contract;
 };

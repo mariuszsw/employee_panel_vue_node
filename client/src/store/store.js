@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-// import AuthService from '@/services/AuthService';
 import { router } from '../router';
 Vue.use(Vuex);
 
@@ -16,7 +15,10 @@ export default new Vuex.Store({
             return state.token !== null;
         },
         isAdmin(state) {
-            return state.roles.find(r => r.name === 'admin');
+            return !!state.roles.find((r) => r.name === 'admin');
+        },
+        isUser(state) {
+            return !!state.roles.find((r) => r.name === 'user');
         },
         getUser(state) {
             return state.user;
