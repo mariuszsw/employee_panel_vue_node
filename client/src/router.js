@@ -38,6 +38,7 @@ export const router = new Router({
             component: () => import('./components/AdminContracts'),
             beforeEnter: checkAuthentication
         },
+
         { path: '*', redirect: '/' }
     ]
 });

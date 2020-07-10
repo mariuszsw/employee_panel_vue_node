@@ -8,16 +8,17 @@ class UserService {
         return Api.get(`users/${userId}`);
     }
 
-    putUser(user) {
-        return Api.put(`users/${user.id}`, user);
-    }
-
-    deleteUser(userId) {
+    delete(userId) {
         return Api.delete(`users/${userId}`);
     }
 
-    contratsAdmin(user) {
-        console.log(user.id);
+    save(user) {
+        if (user.id) {
+            return Api.put(`users/${user.id}`, user);
+        }
+        // else {
+        //     return Api.post(`user`, user);
+        // }
     }
 }
 

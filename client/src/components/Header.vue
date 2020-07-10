@@ -1,6 +1,6 @@
 <template>
     <v-toolbar fixed class="indigo" dark>
-        <v-toolbar-title class="mr-4" dark @click="navaigateTo('home')">Dashboard</v-toolbar-title>
+        <v-toolbar-title class="mr-4" dark @click="navigateTo('home')">Dashboard</v-toolbar-title>
 
         <v-spacer></v-spacer>
 

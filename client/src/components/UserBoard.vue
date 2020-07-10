@@ -1,29 +1,56 @@
 <template>
     <div class="container">
-        <header class="jumbotron">
-            <h4>Hello</h4>
-            <h3>{{ content }}</h3>
-        </header>
+        <div id="app">
+            <v-app id="inspire">
+                <v-data-table
+                    :headers="headers"
+                    :items="contracts"
+                    sort-by="createdAt"
+                    class="elevation-1"
+                >
+                    <template v-slot:top>
+                        <v-toolbar flat color="white">
+                            <v-toolbar-title>USER CONTRACTS</v-toolbar-title>
+                            <v-divider class="mx-4" inset vertical></v-divider>
+                            <v-spacer></v-spacer>
+                        </v-toolbar>
+                    </template>
+                </v-data-table>
+            </v-app>
+        </div>
     </div>
 </template>
 
 <script>
-import UserService from '@/services/UserService.js';
+import UserContractsService from '../services/UserContractsService';
 
 export default {
-    name: 'User',
+    name: 'Admin',
     data() {
         return {
-            content: ''
+            contracts: [],
+
+            headers: [
+                { text: 'Start', value: 'startDate' },
+                { text: 'Duration', value: 'duration' },
+                { text: 'Leave', value: 'leave' }
+            ],
+
+            defaultItem: {
+                startDate: '',
+                duration: '',
+                leave: ''
+            }
         };
     },
+
     async mounted() {
         try {
-            const userId = this.$route.params.userId;
-            const { data } = await UserService.getUserBoard(userId);
-            this.content = data;
+            const { userId } = this.$route.params;
+            const { data } = await UserContractsService.index(userId);
+            this.contracts = data;
         } catch (error) {
-            this.content =
+            this.errorMessage =
                 (error.response && error.response.data
                     ? error.response.data
                     : null) ||
@@ -33,3 +60,9 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+v-btn {
+    position: absolute;
+}
+</style>

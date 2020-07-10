@@ -6,25 +6,24 @@
                     <v-data-table
                         :headers="headers"
                         :items="users"
-                        sort-by="surname"
+                        sort-by="createdAt"
                         class="elevation-1"
                     >
                         <template v-slot:top>
                             <v-toolbar flat color="white">
-                                <v-toolbar-title>ADMIN PANEL</v-toolbar-title>
+                                <v-toolbar-title>EMPLOYEE PANEL</v-toolbar-title>
                                 <v-divider class="mx-4" inset vertical></v-divider>
                                 <v-spacer></v-spacer>
                                 <v-dialog v-model="dialog" max-width="500px">
-                                    <!-- <template v-slot:activator="{ on, attrs }">
+                                    <template v-slot:activator="{ on, attrs }">
                                         <v-btn
                                             color="primary"
                                             dark
                                             class="mb-2"
                                             v-bind="attrs"
                                             v-on="on"
-                                            >New Item</v-btn
-                                        >
-                                    </template>-->
+                                        >New Employee</v-btn>
+                                    </template>
 
                                     <v-card>
                                         <v-card-title>
@@ -81,13 +80,25 @@
                         </template>
                         <template v-slot:item.actions="{ item }">
                             <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-                            <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+                            <!-- <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
+                            <v-icon small @click="showDeleteDialog(item)">mdi-delete</v-icon>
                             <v-icon middle @click="contracts(item)">play_arrow</v-icon>
                         </template>
-                        <template v-slot:no-data>
-                            <v-btn color="primary" @click="initialize">Reset</v-btn>
-                        </template>
                     </v-data-table>
+                    <v-dialog v-model="isDialogDeleteVisible" max-width="500px">
+                        <v-card>
+                            <v-card-title>Remove</v-card-title>
+                            <v-card-text>Are you sure to delete?</v-card-text>
+                            <v-card-actions>
+                                <v-btn
+                                    color="primary"
+                                    text
+                                    @click="isDialogDeleteVisible = false"
+                                >Close</v-btn>
+                                <v-btn color="primary" text @click="deleteItem">Delete</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
                 </v-app>
             </div>
         </header>
@@ -96,13 +107,15 @@
 
 <script>
 import UserService from '../services/UserService.js';
+import UsersListService from '../services/UsersListService.js';
 
 export default {
     name: 'Admin',
     data() {
         return {
-            content: '',
+            users: [],
             dialog: false,
+            isDialogDeleteVisible: false,
             headers: [
                 { text: 'First Name', value: 'name' },
                 { text: 'Last Name', value: 'surname' },
@@ -110,15 +123,8 @@ export default {
                 { text: 'Email', value: 'email' },
                 { text: 'Actions', value: 'actions', sortable: false }
             ],
-            users: [],
-            editedIndex: -1,
-            editedItem: {
-                name: '',
-                surname: '',
-                email: '',
-                birthdate: 0,
-                password: 0
-            },
+            editedItem: {},
+
             defaultItem: {
                 name: '',
                 surname: '',
@@ -129,9 +135,27 @@ export default {
         };
     },
 
+    created() {
+        this.editedItem = { ...this.defaultItem };
+    },
+
+    async mounted() {
+        try {
+            const { userId } = this.$route.params;
+            const { data } = await UsersListService.index(userId);
+            this.users = data;
+        } catch (error) {
+            this.content =
+                (error.response && error.response.data
+                    ? error.response.data
+                    : null) ||
+                error.message ||
+                error.toString();
+        }
+    },
     computed: {
         formTitle() {
-            return this.editedIndex === -1 ? 'New User' : 'Edit Item';
+            return this.editedItem.id ? 'New User' : 'Edit Item';
         }
     },
 
@@ -142,66 +166,54 @@ export default {
     },
 
     methods: {
-        initialize() {
-            this.users = this.content;
-        },
-
         editItem(item) {
-            this.editedIndex = this.users.indexOf(item);
-            this.editedItem = Object.assign({}, item);
+            this.editedItem = { ...item };
             this.dialog = true;
         },
 
-        deleteItem(item) {
-            const index = this.users.indexOf(item);
-            
-            if (confirm('Are you sure you want to delete this item?')) {
-                UserService.deleteUser(item.id);
-                this.users.splice(index, 1);
-            }
+        async deleteItem() {
+            const index = this.users.findIndex(
+                c => c.id === this.itemToDelete.id
+            );
+            this.users.splice(index, 1);
+            this.isDialogDeleteVisible = false;
+
+            await UserService.delete(this.itemToDelete.id);
+            this.itemToDelete = { ...this.defaultItem };
+        },
+
+        showDeleteDialog(item) {
+            this.itemToDelete = item;
+            this.isDialogDeleteVisible = !this.isDialogDeleteVisible;
         },
 
         close() {
             this.dialog = false;
-            this.$nextTick(() => {
-                this.editedItem = { ...this.defaultItem };
-                this.editedIndex = -1;
-            });
+            this.editedItem = { ...this.defaultItem };
         },
 
-        save() {
-            if (this.editedIndex > -1) {
-                try {
-                    UserService.putUser(this.users[this.editedIndex]);
-                    Object.assign(
-                        this.users[this.editedIndex],
-                        this.editedItem
-                    );
-                } catch (error) {
-                    console.error(error);
-                }
+        async save() {
+            if (this.editedItem.id) {
+                const index = this.users.findIndex(
+                    c => c.id === this.editedItem.id
+                );
+
+                await UserService.save(this.editedItem);
+
+                this.$set(this.users, index, this.editedItem);
             } else {
-                this.users.push(this.editedItem);
+                this.editedItem.userId = this.$route.params.userId;
+
+                const { data } = await UserService.save(this.editedItem);
+
+                this.users.push(data);
             }
+
             this.close();
         },
+
         contracts(item) {
             this.$router.push(`/contracts/${item.id}`);
-        }
-    },
-
-    async mounted() {
-        try {
-            const { data } = await UserService.getAdminBoard();
-            this.content = data;
-            this.initialize();
-        } catch (error) {
-            this.content =
-                (error.response && error.response.data
-                    ? error.response.data
-                    : null) ||
-                error.message ||
-                error.toString();
         }
     }
 };

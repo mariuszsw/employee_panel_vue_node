@@ -8,9 +8,19 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
 
-            name: {
+            startDate: {
                 allowNull: false,
-                type: Sequelize.STRING
+                type: Sequelize.DATEONLY
+            },
+
+            duration: {
+                allowNull: false,
+                type: Sequelize.INTEGER
+            },
+
+            leave: {
+                allowNull: false,
+                type: Sequelize.INTEGER
             },
 
             userId: {
@@ -22,10 +32,12 @@ module.exports = {
                     key: 'id'
                 }
             },
+
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
             },
+
             updatedAt: {
                 allowNull: false,
                 type: Sequelize.DATE

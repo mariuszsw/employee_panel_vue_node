@@ -13,7 +13,6 @@ class AuthController {
 
     async register(req, res) {
         const { roles } = req.body;
-        console.log(roles);
         const user = await User.create({
             ...req.body,
             createdAt: new Date(),

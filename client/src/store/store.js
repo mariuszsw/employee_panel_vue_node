@@ -63,7 +63,7 @@ export default new Vuex.Store({
                 commit('setToken', data.token);
                 commit('setRoles', data.user.roles);
 
-                dispatch('setLogoutTimer', 600);
+                dispatch('setLogoutTimer', 6000);
             } catch (error) {
                 console.error(error);
             }
@@ -75,7 +75,7 @@ export default new Vuex.Store({
                 localStorage.removeItem('expirationDate');
                 localStorage.removeItem('token');
                 router.push('/login');
-            }, expirationTime * 1000);
+            }, expirationTime * 6000);
         },
 
         tryAutoLogin({ commit, dispatch }) {
@@ -91,7 +91,7 @@ export default new Vuex.Store({
             if (now >= expirationDate) {
                 return;
             }
-            dispatch('setLogoutTimer', 600);
+            dispatch('setLogoutTimer', 6000);
             const user = JSON.parse(localStorage.getItem('user'));
             const roles = JSON.parse(localStorage.getItem('roles'));
 

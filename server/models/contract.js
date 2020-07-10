@@ -26,9 +26,19 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER
             },
 
-            name: {
+            startDate: {
                 allowNull: false,
-                type: DataTypes.STRING
+                type: DataTypes.DATEONLY
+            },
+
+            duration: {
+                allowNull: false,
+                type: DataTypes.INTEGER
+            },
+
+            leave: {
+                allowNull: false,
+                type: DataTypes.INTEGER
             },
 
             userId: {
@@ -40,10 +50,12 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'id'
                 }
             },
+
             createdAt: {
                 allowNull: false,
                 type: DataTypes.DATE
             },
+
             updatedAt: {
                 allowNull: false,
                 type: DataTypes.DATE

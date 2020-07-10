@@ -1,9 +1,9 @@
 const HttpStatus = require('http-status-codes');
-const { User } = require('../models');
+const { User, Contract } = require('../models');
 const isUser = require('../middlewares/isUser');
 const isAdmin = require('../middlewares/isAdmin');
 
-module.exports = {
+class UserController {
     async index(req, res) {
         try {
             const users = await User.findAll();
@@ -14,7 +14,7 @@ module.exports = {
                 error: 'Internal Server Error'
             });
         }
-    },
+    }
 
     async show(req, res) {
         try {
@@ -31,7 +31,7 @@ module.exports = {
                 error: 'Internal Server Error'
             });
         }
-    },
+    }
 
     async delete(req, res) {
         try {
@@ -49,11 +49,10 @@ module.exports = {
                 error: 'Internal Server Error'
             });
         }
-    },
+    }
 
     async update(req, res) {
         const user = await User.findByPk(req.loggedUserId);
-
         if (!user) {
             return res.status(HttpStatus.NOT_FOUND).send({
                 message: 'Require User Role!'
@@ -81,4 +80,6 @@ module.exports = {
             });
         }
     }
-};
+}
+
+module.exports = UserController;
