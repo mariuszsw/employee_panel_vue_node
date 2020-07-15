@@ -3,7 +3,6 @@ import Router from 'vue-router';
 
 import Login from './components/Login.vue';
 import Home from './components/Home.vue';
-import Signup from './components/Signup.vue';
 import User from './components/User.vue';
 import store from '@/store/store';
 
@@ -21,7 +20,6 @@ export const router = new Router({
         { path: '/', component: Login },
         { path: '/login', component: Login },
         { path: '/home', component: Home },
-        { path: '/signup', component: Signup },
         { path: '/user', component: User, beforeEnter: checkAuthentication },
         {
             path: '/admin',

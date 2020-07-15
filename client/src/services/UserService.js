@@ -1,11 +1,8 @@
 import Api from '@/services/Api';
 
 class UserService {
-    getAdminBoard() {
-        return Api.get('users');
-    }
-    getUserBoard(userId) {
-        return Api.get(`users/${userId}`);
+    index() {
+        return Api.get(`users`);
     }
 
     delete(userId) {
@@ -15,10 +12,9 @@ class UserService {
     save(user) {
         if (user.id) {
             return Api.put(`users/${user.id}`, user);
+        } else {
+            return Api.post('users', user);
         }
-        // else {
-        //     return Api.post(`user`, user);
-        // }
     }
 }
 

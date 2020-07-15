@@ -2,6 +2,24 @@ const { body } = require('express-validator');
 const { User } = require('../models');
 
 module.exports = [
+    body(['name'])
+        .trim()
+        .not()
+        .isEmpty()
+        .withMessage('Should not be empty')
+        .bail()
+        .isLength({ min: 2 })
+        .withMessage('Name must have more than 2 characters'),
+
+    body(['surname'])
+        .trim()
+        .not()
+        .isEmpty()
+        .bail()
+        .withMessage('Should not be empty')
+        .isLength({ min: 2 })
+        .withMessage('Surname must have more than 2 characters'),
+
     body(['email'])
         .trim()
         .not()

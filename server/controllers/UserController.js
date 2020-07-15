@@ -1,7 +1,9 @@
 const HttpStatus = require('http-status-codes');
-const { User, Contract } = require('../models');
-const isUser = require('../middlewares/isUser');
-const isAdmin = require('../middlewares/isAdmin');
+const { User, Role } = require('../models');
+const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');
+const config = require('../config');
+const bcrypt = require('bcrypt');
 
 class UserController {
     async index(req, res) {
@@ -67,6 +69,8 @@ class UserController {
                     return res.sendStatus(HttpStatus.FORBIDDEN);
                 }
             }
+            req.body.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8));
+
             const updateUser = await User.update(req.body, {
                 where: {
                     id: req.params.id
@@ -80,6 +84,32 @@ class UserController {
             });
         }
     }
-}
 
+    async create(req, res) {
+        const { roles } = req.body;
+        const user = await User.create({
+            ...req.body,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
+
+        if (roles && roles.length) {
+            const userRoles = await Role.findAll({
+                where: {
+                    name: {
+                        [Op.or]: roles
+                    }
+                }
+            });
+            await user.setRoles(userRoles);
+
+            return res.status(201).send(user);
+        } else {
+            const adminRole = await Role.findOne({ admin: 'admin' });
+            await user.addRole(adminRole);
+
+            return res.status(201).send(user);
+        }
+    }
+}
 module.exports = UserController;

@@ -34,27 +34,27 @@
                                             <v-row>
                                                 <v-col cols="12" sm="6" md="4">
                                                     <v-text-field
-                                                        v-model="editedItem.startDate"
+                                                        v-model="selectedItem.startDate"
                                                         label="Start Contract"
                                                         required
-                                                    ></v-text-field>
+                                                    />
                                                 </v-col>
 
                                                 <v-col cols="12" sm="6">
                                                     <v-select
-                                                        v-model="editedItem.duration"
+                                                        v-model="selectedItem.duration"
                                                         :items="[1, 2, 3, 6, 12]"
                                                         label="Duration Contract."
                                                         required
-                                                    ></v-select>
+                                                    />
                                                 </v-col>
 
                                                 <v-col cols="12" sm="6" md="4">
                                                     <v-select
-                                                        v-model="editedItem.leave"
+                                                        v-model="selectedItem.leave"
                                                         :items="[20, 26]"
                                                         label="Days off"
-                                                    ></v-select>
+                                                    />
                                                 </v-col>
                                             </v-row>
                                         </v-container>
@@ -101,14 +101,13 @@ export default {
             contracts: [],
             dialog: false,
             isDialogDeleteVisible: false,
-            itemToDelete: {},
             headers: [
                 { text: 'Start', value: 'startDate' },
                 { text: 'Duration', value: 'duration' },
                 { text: 'Leave', value: 'leave' },
                 { text: 'Actions', value: 'actions', sortable: false }
             ],
-            editedItem: {},
+            selectedItem: {},
             defaultItem: {
                 startDate: '',
                 duration: '',
@@ -118,7 +117,7 @@ export default {
     },
 
     created() {
-        this.editedItem = { ...this.defaultItem };
+        this.selectedItem = { ...this.defaultItem };
     },
 
     async mounted() {
@@ -138,7 +137,7 @@ export default {
 
     computed: {
         formTitle() {
-            return this.editedItem.id ? 'Edit Contract' : 'New Contract';
+            return this.selectedItem.id ? 'Edit Contract' : 'New Contract';
         }
     },
 
@@ -150,44 +149,44 @@ export default {
 
     methods: {
         editItem(item) {
-            this.editedItem = { ...item };
+            this.selectedItem = { ...item };
             this.dialog = true;
         },
 
         async deleteItem() {
             const index = this.contracts.findIndex(
-                c => c.id === this.itemToDelete.id
+                contract => contract.id === this.selectedItemlete.id
             );
             this.contracts.splice(index, 1);
             this.isDialogDeleteVisible = false;
 
-            await ContractService.delete(this.itemToDelete.id);
-            this.itemToDelete = { ...this.defaultItem };
+            await ContractService.delete(this.selectedItemlete.id);
+            this.selectedItemlete = { ...this.defaultItem };
         },
 
         showDeleteDialog(item) {
-            this.itemToDelete = item;
+            this.selectedItemlete = item;
             this.isDialogDeleteVisible = !this.isDialogDeleteVisible;
         },
 
         close() {
             this.dialog = false;
-            this.editedItem = { ...this.defaultItem };
+            this.selectedItem = { ...this.defaultItem };
         },
 
         async save() {
-            if (this.editedItem.id) {
+            if (this.selectedItem.id) {
                 const index = this.contracts.findIndex(
-                    c => c.id === this.editedItem.id
+                    contract => contract.id === this.selectedItem.id
                 );
 
-                await ContractService.save(this.editedItem);
+                await ContractService.save(this.selectedItem);
 
-                this.$set(this.contracts, index, this.editedItem);
+                this.$set(this.contracts, index, this.selectedItem);
             } else {
-                this.editedItem.userId = this.$route.params.userId;
+                this.selectedItem.userId = this.$route.params.userId;
 
-                const { data } = await ContractService.save(this.editedItem);
+                const { data } = await ContractService.save(this.selectedItem);
 
                 this.contracts.push(data);
             }

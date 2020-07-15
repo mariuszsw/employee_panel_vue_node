@@ -1,4 +1,4 @@
-const { User, Role } = require('../models');
+const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const HttpStatus = require('http-status-codes');
@@ -9,41 +9,6 @@ class AuthController {
         return jwt.sign({ id: user.id }, config.authentication.jwtSecret, {
             expiresIn: '10h'
         });
-    }
-
-    async register(req, res) {
-        const { roles } = req.body;
-        const user = await User.create({
-            ...req.body,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        });
-
-        if (roles && roles.length) {
-            const userRoles = await Role.findAll({
-                where: {
-                    name: {
-                        [Op.or]: roles
-                    }
-                }
-            });
-            await user.setRoles(userRoles);
-
-            return res.send({
-                message: 'User was registered successfully!',
-                user,
-                token: this.jwtRegUser(user.toJSON())
-            });
-        } else {
-            const adminRole = await Role.findOne({ admin: 'admin' });
-            await user.addRole(adminRole);
-
-            return res.send({
-                message: 'User was registered successfully!',
-                user,
-                token: this.jwtRegUser(user.toJSON())
-            });
-        }
     }
 
     async login(req, res) {
