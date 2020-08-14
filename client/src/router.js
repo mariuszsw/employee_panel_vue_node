@@ -37,6 +37,12 @@ export const router = new Router({
             beforeEnter: checkAuthentication
         },
 
+        {
+            path: '/leaves/:userId',
+            component: () => import('./components/AdminLeave'),
+            beforeEnter: checkAuthentication
+        },
+
         { path: '*', redirect: '/' }
     ]
 });

@@ -15,6 +15,9 @@
                             <v-spacer></v-spacer>
                         </v-toolbar>
                     </template>
+                    <template v-slot:item.actions>
+                        <v-icon middle @click="goToRouteLeaves">play_arrow</v-icon>
+                    </template>
                 </v-data-table>
             </v-app>
         </div>
@@ -23,9 +26,11 @@
 
 <script>
 import UserContractsService from '../services/UserContractsService';
+import { mapGetters } from 'vuex';
 
 export default {
-    name: 'Admin',
+    name: 'User',
+
     data() {
         return {
             contracts: [],
@@ -33,7 +38,8 @@ export default {
             headers: [
                 { text: 'Start', value: 'startDate' },
                 { text: 'Duration', value: 'duration' },
-                { text: 'Leave', value: 'leave' }
+                { text: 'Leave', value: 'leave' },
+                { text: 'Actions', value: 'actions', sortable: false }
             ],
 
             defaultItem: {
@@ -44,6 +50,12 @@ export default {
         };
     },
 
+    computed: {
+        ...mapGetters({
+            currentUser: 'getUser'
+        })
+    },
+
     async mounted() {
         try {
             const { userId } = this.$route.params;
@@ -51,11 +63,15 @@ export default {
             this.contracts = data;
         } catch (error) {
             this.errorMessage =
-                (error.response && error.response.data
-                    ? error.response.data
-                    : null) ||
+                (error.response && error.response.data ? error.response.data : null) ||
                 error.message ||
                 error.toString();
+        }
+    },
+
+    methods: {
+        goToRouteLeaves() {
+            this.$router.push(`/leaves/${this.currentUser.id}`);
         }
     }
 };

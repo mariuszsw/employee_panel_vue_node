@@ -1,14 +1,22 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { router } from '../router';
+import ContractService from '@/services/ContractService';
+import UserService from '@/services/UserService.js';
+import UserContractsService from '../services/UserContractsService';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     strict: true,
     state: {
         token: null,
-        user: null,
-        roles: []
+        user: [],
+        index: null,
+        roles: [],
+        contracts: [],
+        userId: null,
+        selectedItem: null
     },
     getters: {
         isAuthenticated(state) {
@@ -25,6 +33,9 @@ export default new Vuex.Store({
         },
         getRoles(state) {
             return state.roles;
+        },
+        getContracts(state) {
+            return state.contracts;
         }
     },
     mutations: {
@@ -48,6 +59,33 @@ export default new Vuex.Store({
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             localStorage.removeItem('roles');
+        },
+        setContract(state, contracts) {
+            state.contracts = contracts;
+        },
+
+        setUsers(state, payload) {
+            state.user = payload.user;
+        },
+
+        DELETE_CONTRACT(state, contractId) {
+            const index = state.contracts.findIndex((contract) => contract.id === contractId);
+
+            state.contracts.splice(index, 1);
+        },
+
+        setUserId(state, userId) {
+            state.userId = userId;
+        },
+        EDIT_CONTRACT(state, editedContract) {
+            const index = state.contracts.findIndex((contract) => contract.id === editedContract.id);
+            if (~index) {
+                state.contracts.splice(index, 1, editedContract);
+            }
+        },
+
+        ADD_CONTRACT(state, contract) {
+            state.contracts.push(contract);
         }
     },
 
@@ -103,6 +141,29 @@ export default new Vuex.Store({
 
         logout({ commit }) {
             commit('clearAuthData');
+        },
+
+        async removeContract({ commit }, contractId) {
+            await ContractService.delete(contractId.id);
+            commit('DELETE_CONTRACT', contractId.id);
+        },
+
+        async removeUser({ commit }, payload) {
+            commit('setUsers', payload.users);
+
+            const index = payload.users.findIndex((user) => user.id === payload.selectedItem.id);
+            payload.users.splice(index, 1);
+
+            await UserService.delete(payload.selectedItem.id);
+        },
+
+        async getContracts({ commit }, userId) {
+            const { data } = await UserContractsService.index(userId);
+
+            commit('setUserId', userId);
+            commit('setContract', data);
+
+            return data;
         }
     }
 });

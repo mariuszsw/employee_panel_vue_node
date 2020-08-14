@@ -1,16 +1,18 @@
 <template>
     <v-toolbar fixed class="indigo" dark>
-        <v-toolbar-title class="mr-4" dark @click="navigateTo('home')">Dashboard</v-toolbar-title>
-
         <v-spacer></v-spacer>
 
         <v-toolbar-items>
             <v-btn v-if="!isAuthenticated" text dark router to="/login">Login</v-btn>
             <v-btn v-if="isAuthenticated" text dark router to="/user">Profil</v-btn>
             <v-btn v-if="isAdminBoard" text dark router to="/admin">Admin Board</v-btn>
-            <v-btn v-if="isUserBoard" text dark router :to="{ path: '/users/' + this.currentUser.id }"
-                >User Board</v-btn
-            >
+            <v-btn
+                v-if="isUserBoard"
+                text
+                dark
+                router
+                :to="{ path: '/users/' + this.currentUser.id }"
+            >User Board</v-btn>
 
             <v-btn v-if="isAuthenticated" text dark @click="onLogout">Log Out</v-btn>
         </v-toolbar-items>
