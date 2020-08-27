@@ -1,9 +1,8 @@
 <template>
     <div class="container">
-        <Create-Or-Edit-Employee
-            :is-open.sync="dialog"
-            :selectedObject.sync="selectedItem"
-            :selectedUsers.sync="users"
+        <CreateOrEditEmployee
+            :is-open.sync="isCreateOrEditVisable"
+            :selected-object.sync="selectedItem"
         />
 
         <ConfirmDeleteUser
@@ -36,9 +35,13 @@
                             </v-toolbar>
                         </template>
                         <template v-slot:item.actions="{ item }">
-                            <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+                            <v-icon
+                                small
+                                class="mr-2"
+                                @click="onOpenCreateOrUpdateDialog(item)"
+                            >mdi-pencil</v-icon>
                             <v-icon small @click="showDeleteDialog(item)">mdi-delete</v-icon>
-                            <v-icon middle @click="contracts(item)">play_arrow</v-icon>
+                            <v-icon middle @click="goToRouteContracts(item)">play_arrow</v-icon>
                         </template>
                         <template v-slot:item.leaves="{ item }">
                             <v-icon middle @click="goToRouteLeaves(item)">play_arrow</v-icon>
@@ -51,7 +54,6 @@
 </template>
 
 <script>
-import UserService from '../services/UserService.js';
 import CreateOrEditEmployee from './CreateOrEditEmployee';
 import ConfirmDeleteUser from './ConfirmDeleteUser';
 
@@ -72,7 +74,7 @@ export default {
             selectedItem: {},
 
             users: [],
-            dialog: false,
+            isCreateOrEditVisable: false,
             isDialogDeleteVisible: false,
 
             headers: [
@@ -100,9 +102,7 @@ export default {
 
     async mounted() {
         try {
-            const { userId } = this.$route.params;
-            const { data } = await UserService.index(userId);
-            this.users = data;
+            this.users = await this.getUsers();
         } catch (error) {
             this.content =
                 (error.response && error.response.data ? error.response.data : null) ||
@@ -112,32 +112,27 @@ export default {
     },
 
     methods: {
-        editItem(item) {
-            this.selectedItem = { ...item, password: '' };
+        ...mapActions({
+            removeUser: 'removeUser',
+            getUsers: 'getUsers'
+        }),
 
-            this.onOpenCreateOrUpdateDialog();
-        },
-
-        ...mapActions(['removeUser']),
         onDelete() {
-            this.removeUser({ users: this.users, selectedItem: this.selectedItem });
+            this.removeUser(this.selectedItem);
             this.isDialogDeleteVisible = false;
         },
 
         showDeleteDialog(item) {
             this.selectedItem = item;
-            this.isDialogDeleteVisible = !this.isDialogDeleteVisible;
+            this.isDialogDeleteVisible = true;
         },
 
-        onOpenCreateOrUpdateDialog(item = {}) {
-            this.dialog = true;
-
-            if (item.id) {
-                this.selectedItem = item;
-            }
+        onOpenCreateOrUpdateDialog(item) {
+            this.selectedItem = { ...item };
+            this.isCreateOrEditVisable = true;
         },
 
-        contracts(item) {
+        goToRouteContracts(item) {
             this.$router.push(`/contracts/${item.id}`);
         },
 

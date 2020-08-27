@@ -11,7 +11,8 @@ export default new Vuex.Store({
     strict: true,
     state: {
         token: null,
-        user: [],
+        user: null,
+        users: [],
         index: null,
         roles: [],
         contracts: [],
@@ -51,6 +52,19 @@ export default new Vuex.Store({
             state.roles = roles;
             localStorage.setItem('roles', JSON.stringify(roles));
         },
+
+        addUser(state, data) {
+            state.users.push(data);
+        },
+
+        updateUser(state, data) {
+            const index = state.users.findIndex((user) => user.id === data.id);
+
+            if (~index) {
+                state.users.splice(index, 1, data);
+            }
+        },
+
         clearAuthData(state) {
             state.token = null;
             state.user = null;
@@ -60,31 +74,33 @@ export default new Vuex.Store({
             localStorage.removeItem('user');
             localStorage.removeItem('roles');
         },
-        setContract(state, contracts) {
+        setContracts(state, contracts) {
             state.contracts = contracts;
         },
 
         setUsers(state, payload) {
-            state.user = payload.user;
+            state.users = payload;
         },
 
-        DELETE_CONTRACT(state, contractId) {
+        deleteUser(state, userId) {
+            const index = state.users.findIndex((user) => user.id === userId);
+            state.users.splice(index, 1);
+        },
+
+        deleteContract(state, contractId) {
             const index = state.contracts.findIndex((contract) => contract.id === contractId);
 
             state.contracts.splice(index, 1);
         },
 
-        setUserId(state, userId) {
-            state.userId = userId;
-        },
-        EDIT_CONTRACT(state, editedContract) {
+        updateContract(state, editedContract) {
             const index = state.contracts.findIndex((contract) => contract.id === editedContract.id);
             if (~index) {
                 state.contracts.splice(index, 1, editedContract);
             }
         },
 
-        ADD_CONTRACT(state, contract) {
+        addContract(state, contract) {
             state.contracts.push(contract);
         }
     },
@@ -145,25 +161,60 @@ export default new Vuex.Store({
 
         async removeContract({ commit }, contractId) {
             await ContractService.delete(contractId.id);
-            commit('DELETE_CONTRACT', contractId.id);
+
+            commit('deleteContract', contractId.id);
         },
 
-        async removeUser({ commit }, payload) {
-            commit('setUsers', payload.users);
+        async removeUser({ commit }, user) {
+            await UserService.delete(user.id);
 
-            const index = payload.users.findIndex((user) => user.id === payload.selectedItem.id);
-            payload.users.splice(index, 1);
-
-            await UserService.delete(payload.selectedItem.id);
+            commit('deleteUser', user.id);
         },
 
         async getContracts({ commit }, userId) {
             const { data } = await UserContractsService.index(userId);
 
-            commit('setUserId', userId);
-            commit('setContract', data);
+            commit('setContracts', data);
 
             return data;
+        },
+
+        async getUsers({ commit }) {
+            const { data } = await UserService.index();
+
+            commit('setUsers', data);
+            return data;
+        },
+
+        async updateUser({ commit }, editedUser) {
+            await UserService.save(editedUser);
+
+            commit('updateUser', editedUser);
+        },
+
+        async addUser({ commit }, editedUser) {
+            const { data } = await UserService.save(editedUser);
+            commit('addUser', data);
+        },
+
+        async saveUser({ dispatch }, selectedItem) {
+            if (selectedItem.id) {
+                dispatch('updateUser', selectedItem);
+            } else {
+                dispatch('addUser', selectedItem);
+            }
+        },
+
+        async saveContract({ commit }, selectedItem) {
+            if (selectedItem.id) {
+                await ContractService.save(selectedItem);
+
+                commit('updateContract', selectedItem);
+            } else {
+                const { data } = await ContractService.save(selectedItem);
+
+                commit('addContract', data);
+            }
         }
     }
 });

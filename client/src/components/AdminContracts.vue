@@ -1,9 +1,8 @@
 <template>
     <div class="container">
-        <Create-Or-Edit-Contract
-            :is-open.sync="dialog"
+        <CreateOrEditContract
+            :is-open.sync="isOpenCreateOrEditDialog"
             :selected-object.sync="selectedItem"
-            :arr-contracts.sync="contracts"
         />
 
         <div id="app">
@@ -52,7 +51,6 @@
 
 <script>
 import CreateOrEditContract from './CreateOrEditContract';
-// import UserContractsService from '../services/UserContractsService';
 import { mapActions } from 'vuex';
 
 export default {
@@ -73,7 +71,7 @@ export default {
             errorMessage: '',
             error: null,
             contracts: [],
-            dialog: false,
+            isOpenCreateOrEditDialog: false,
 
             isDialogDeleteVisible: false,
             headers: [
@@ -97,8 +95,7 @@ export default {
     async mounted() {
         try {
             const { userId } = this.$route.params;
-            //  const { data } = await UserContractsService.index(userId);
-            //  this.contracts = data;
+
             this.contracts = await this.getContracts(userId);
         } catch (error) {
             this.errorMessage =
@@ -117,13 +114,14 @@ export default {
     methods: {
         editItem(item) {
             this.selectedItem = { ...item };
-            this.dialog = true;
+            this.isOpenCreateOrEditDialog = true;
         },
 
         ...mapActions({
             removeContract: 'removeContract',
             getContracts: 'getContracts'
         }),
+
         onDeleteItem() {
             this.removeContract(this.selectedItemlete);
             this.isDialogDeleteVisible = false;
@@ -135,12 +133,12 @@ export default {
         },
 
         close() {
-            this.dialog = false;
+            this.isOpenCreateOrEditDialog = false;
             this.selectedItem = { ...this.defaultItem };
         },
 
         onOpenCreateOrUpdateDialog(item = {}) {
-            this.dialog = true;
+            this.isOpenCreateOrEditDialog = true;
 
             if (item.id) {
                 this.selectedItem = item;

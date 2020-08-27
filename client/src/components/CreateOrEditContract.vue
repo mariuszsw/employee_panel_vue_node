@@ -69,8 +69,8 @@
 <script>
 import { validationMixin } from 'vuelidate';
 import { required } from 'vuelidate/lib/validators';
-import ContractService from '../services/ContractService';
 import UserContractsService from '../services/UserContractsService';
+import { mapActions } from 'vuex';
 
 import moment from 'moment';
 
@@ -189,6 +189,10 @@ export default {
     },
 
     methods: {
+        ...mapActions({
+            saveContract: 'saveContract'
+        }),
+
         close() {
             this.open = false;
             this.selectedItem = { ...this.defaultItem };
@@ -196,17 +200,8 @@ export default {
         },
 
         async onSave() {
-            if (this.selectedItem.id) {
-                await ContractService.save(this.selectedItem);
-
-                this.$store.commit('EDIT_CONTRACT', this.selectedItem);
-            } else {
-                this.selectedItem.userId = this.$route.params.userId;
-
-                const { data } = await ContractService.save(this.selectedItem);
-
-                this.$store.commit('ADD_CONTRACT', data);
-            }
+            this.selectedItem.userId = this.$route.params.userId;
+            this.saveContract(this.selectedItem);
 
             this.close();
         },

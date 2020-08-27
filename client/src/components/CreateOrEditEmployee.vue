@@ -8,104 +8,102 @@
 
                 <v-card-text>
                     <v-container>
-                        <v-form>
-                            <v-row>
-                                <v-col cols="2" sm="6" md="400">
-                                    <v-text-field
-                                        v-model="selectedItem.name"
-                                        label="Employee Name"
-                                        name="name"
-                                        prepend-icon="person"
-                                        type="text"
-                                        required
-                                        :rules="nameErrors"
-                                        @input="$v.selectedItem.name.$touch()"
-                                        @blur="$v.selectedItem.name.$touch()"
-                                        @keyup="clearServerErrors('name')"
-                                    />
-                                </v-col>
+                        <v-row>
+                            <v-col cols="2" sm="6" md="400">
+                                <v-text-field
+                                    v-model="selectedItem.name"
+                                    label="Employee Name"
+                                    name="name"
+                                    prepend-icon="person"
+                                    type="text"
+                                    required
+                                    :rules="nameErrors"
+                                    @input="$v.selectedItem.name.$touch()"
+                                    @blur="$v.selectedItem.name.$touch()"
+                                    @keyup="clearServerErrors('name')"
+                                />
+                            </v-col>
 
-                                <v-col cols="12" sm="6" md="400">
-                                    <v-text-field
-                                        v-model="selectedItem.surname"
-                                        label="Employee Surname"
-                                        name="surname"
-                                        prepend-icon="person"
-                                        type="text"
-                                        required
-                                        :rules="surnameErrors"
-                                        @input="$v.selectedItem.surname.$touch()"
-                                        @blur="$v.selectedItem.surname.$touch()"
-                                        @keyup="clearServerErrors('surname')"
-                                    />
-                                </v-col>
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-menu
-                                        v-model="birthdateButton"
-                                        ref="birthdateButton"
-                                        :close-on-content-click="false"
-                                        transition="scale-transition"
-                                        offset-y
-                                        min-width="290px"
-                                    >
-                                        <template v-slot:activator="{on, attrs }">
-                                            <v-text-field
-                                                v-model="selectedItem.birthdate"
-                                                label="Birthday date"
-                                                prepend-icon="event"
-                                                readonly
-                                                v-bind="attrs"
-                                                v-on="on"
-                                                :rules="birthdate"
-                                                @input="$v.selectedItem.birthdate.$touch()"
-                                                @blur="$v.selectedItem.birthdate.$touch()"
-                                                @keyup="clearServerErrors('birthdate')"
-                                            />
-                                        </template>
-                                        <v-date-picker
+                            <v-col cols="12" sm="6" md="400">
+                                <v-text-field
+                                    v-model="selectedItem.surname"
+                                    label="Employee Surname"
+                                    name="surname"
+                                    prepend-icon="person"
+                                    type="text"
+                                    required
+                                    :rules="surnameErrors"
+                                    @input="$v.selectedItem.surname.$touch()"
+                                    @blur="$v.selectedItem.surname.$touch()"
+                                    @keyup="clearServerErrors('surname')"
+                                />
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-menu
+                                    v-model="birthdateButton"
+                                    ref="birthdateButton"
+                                    :close-on-content-click="false"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="290px"
+                                >
+                                    <template v-slot:activator="{on, attrs }">
+                                        <v-text-field
                                             v-model="selectedItem.birthdate"
-                                            name="birthdate"
-                                            ref="picker"
-                                            :max="new Date().toISOString().substr(0, 10)"
-                                            min="1900-01-01"
-                                            @change="saveBirthdate"
-                                        ></v-date-picker>
-                                    </v-menu>
-                                </v-col>
-                                <v-col cols="12" sm="6" md="24">
-                                    <v-text-field
-                                        v-model="selectedItem.email"
-                                        label="Email"
-                                        name="email"
-                                        prepend-icon="email"
-                                        type="text"
-                                        required
-                                        :rules="emailErrors"
-                                        @input="$v.selectedItem.email.$touch()"
-                                        @blur="$v.selectedItem.email.$touch()"
-                                        @keyup="clearServerErrors('email')"
-                                    />
-                                </v-col>
-                                <v-col cols="12" sm="6" md="24">
-                                    <v-text-field
-                                        v-model="selectedItem.password"
-                                        label="Password"
-                                        prepend-icon="lock"
-                                        type="password"
-                                        required
-                                        :rules="passwordErrors"
-                                        @input="$v.selectedItem.password.$touch()"
-                                        @blur="$v.selectedItem.password.$touch()"
-                                        @keyup="clearServerErrors('password')"
-                                    />
-                                </v-col>
-                                <v-alert
-                                    :value="validationError"
-                                    color="error"
-                                    v-html="error"
-                                >{{ errorMessage }}</v-alert>
-                            </v-row>
-                        </v-form>
+                                            label="Birthday date"
+                                            prepend-icon="event"
+                                            readonly
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            :rules="birthdate"
+                                            @input="$v.selectedItem.birthdate.$touch()"
+                                            @blur="$v.selectedItem.birthdate.$touch()"
+                                            @keyup="clearServerErrors('birthdate')"
+                                        />
+                                    </template>
+                                    <v-date-picker
+                                        v-model="selectedItem.birthdate"
+                                        name="birthdate"
+                                        ref="picker"
+                                        :max="new Date().toISOString().substr(0, 10)"
+                                        min="1900-01-01"
+                                        @change="saveBirthdate"
+                                    ></v-date-picker>
+                                </v-menu>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="24">
+                                <v-text-field
+                                    v-model="selectedItem.email"
+                                    label="Email"
+                                    name="email"
+                                    prepend-icon="email"
+                                    type="text"
+                                    required
+                                    :rules="emailErrors"
+                                    @input="$v.selectedItem.email.$touch()"
+                                    @blur="$v.selectedItem.email.$touch()"
+                                    @keyup="clearServerErrors('email')"
+                                />
+                            </v-col>
+                            <v-col cols="12" sm="6" md="24">
+                                <v-text-field
+                                    v-model="selectedItem.password"
+                                    label="Password"
+                                    prepend-icon="lock"
+                                    type="password"
+                                    required
+                                    :rules="passwordErrors"
+                                    @input="$v.selectedItem.password.$touch()"
+                                    @blur="$v.selectedItem.password.$touch()"
+                                    @keyup="clearServerErrors('password')"
+                                />
+                            </v-col>
+                            <v-alert
+                                :value="validationError"
+                                color="error"
+                                v-html="error"
+                            >{{ errorMessage }}</v-alert>
+                        </v-row>
                     </v-container>
                 </v-card-text>
 
@@ -121,11 +119,22 @@
 
 
 <script>
-import UserService from '../services/UserService.js';
 import { validationMixin } from 'vuelidate';
 import { required, minLength, maxLength, email } from 'vuelidate/lib/validators';
+import { mapActions } from 'vuex';
+
 export default {
     mixins: [validationMixin],
+
+    props: {
+        isOpen: Boolean,
+        selectedObject: {
+            Object,
+            default: () => {
+                return {};
+            }
+        }
+    },
     validations: {
         selectedItem: {
             name: {
@@ -150,16 +159,6 @@ export default {
             }
         }
     },
-    props: {
-        isOpen: Boolean,
-        selectedObject: {
-            Object,
-            default: () => {
-                return {};
-            }
-        },
-        selectedUsers: Array
-    },
 
     data() {
         return {
@@ -173,7 +172,6 @@ export default {
             errorMessage: '',
             error: null,
             validationError: false,
-
             birthdateButton: false,
             isCreateOrUpdateDialogVisible: false
         };
@@ -196,16 +194,6 @@ export default {
 
             set(newValue) {
                 this.$emit('update:selectedObject', newValue);
-            }
-        },
-
-        users: {
-            get() {
-                return this.selectedUsers;
-            },
-
-            set: function (newValue) {
-                this.$emit('update:selectedUsers', newValue);
             }
         },
 
@@ -285,24 +273,21 @@ export default {
     },
 
     methods: {
+        ...mapActions({
+            saveUser: 'saveUser'
+        }),
+
         close() {
             this.open = false;
             this.selectedItem = { ...this.defaultItem };
             this.$v.$reset();
         },
 
-        async onSave() {
+        onSave() {
             try {
-                const { data } = await UserService.save(this.selectedItem);
                 this.validationError = false;
 
-                if (this.selectedItem.id) {
-                    const index = this.users.findIndex((user) => user.id === this.selectedItem.id);
-
-                    this.$set(this.users, index, this.selectedItem);
-                } else {
-                    this.users.push(data);
-                }
+                this.saveUser(this.selectedItem);
             } catch (error) {
                 if (error.status === 400) {
                     error.data.errors.map((error) => {
