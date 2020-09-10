@@ -23,12 +23,12 @@ class AuthController {
             });
 
             if (!user) {
-                return status(HttpStatus.UNAUTHORIZED).send({
+                return res.status(HttpStatus.UNAUTHORIZED).send({
                     message: 'Email or password incorrect!'
                 });
             }
-
             const isPasswordValid = await user.comparePassword(password);
+
             if (!isPasswordValid) {
                 return res.status(HttpStatus.UNAUTHORIZED).send({
                     message: 'Email or password incorrect!'

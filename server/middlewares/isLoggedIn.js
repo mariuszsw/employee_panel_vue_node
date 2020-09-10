@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
     let token = req.headers['x-access-token'];
 
     if (!token) {
-        return res.status(HttpStatus.FORBIDDEN).send({
+        return res.status(HttpStatus.UNAUTHORIZED).send({
             message: 'No token provided!'
         });
     }

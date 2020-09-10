@@ -1,8 +1,6 @@
 const HttpStatus = require('http-status-codes');
 const { User, Role } = require('../models');
-const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
-const config = require('../config');
 const bcrypt = require('bcrypt');
 
 class UserController {
@@ -55,6 +53,7 @@ class UserController {
 
     async update(req, res) {
         const user = await User.findByPk(req.loggedUserId);
+
         if (!user) {
             return res.status(HttpStatus.NOT_FOUND).send({
                 message: 'Require User Role!'
@@ -76,7 +75,6 @@ class UserController {
                     id: req.params.id
                 }
             });
-
             return res.send(updateUser);
         } catch (error) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
@@ -86,7 +84,8 @@ class UserController {
     }
 
     async create(req, res) {
-        const { roles } = req.body;
+        const { roles, email } = req.body;
+
         const user = await User.create({
             ...req.body,
             createdAt: new Date(),

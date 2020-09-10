@@ -36,7 +36,8 @@ const config = {
             charset: 'utf8mb4',
             collate: 'utf8mb4_unicode_ci',
             timestamps: false
-        }
+        },
+        dialect: 'mysql'
     },
     authentication: {
         jwtSecret: process.env.JWT_SECRET || 'secret'

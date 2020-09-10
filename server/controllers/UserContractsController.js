@@ -1,7 +1,5 @@
 const HttpStatus = require('http-status-codes');
-const { User, Contract, Leave } = require('../models');
-const isUser = require('../middlewares/isUser');
-const isAdmin = require('../middlewares/isAdmin');
+const { Contract } = require('../models');
 
 class UserContractsController {
     async index(req, res) {
