@@ -7,7 +7,6 @@ module.exports = [
         .not()
         .isEmpty()
         .withMessage('Should not be empty')
-        .bail()
         .isLength({ min: 2 })
         .withMessage('Name must have more than 2 characters'),
 
@@ -15,7 +14,6 @@ module.exports = [
         .trim()
         .not()
         .isEmpty()
-        .bail()
         .withMessage('Should not be empty')
         .isLength({ min: 2 })
         .withMessage('Surname must have more than 2 characters'),
@@ -25,7 +23,6 @@ module.exports = [
         .not()
         .isEmpty()
         .withMessage('Should not be empty')
-        .bail()
         .isEmail()
         .withMessage('Email address is not valid!')
         .bail()
@@ -46,7 +43,6 @@ module.exports = [
         .not()
         .isEmpty()
         .withMessage('Should not be empty')
-        .bail()
         .isLength({ min: 6, max: 32 })
         .withMessage('Password must be 6-32 characters in length')
 ];

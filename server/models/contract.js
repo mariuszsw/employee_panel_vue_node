@@ -49,16 +49,6 @@ module.exports = (sequelize, DataTypes) => {
                     model: 'User',
                     key: 'id'
                 }
-            },
-
-            createdAt: {
-                allowNull: false,
-                type: DataTypes.DATE
-            },
-
-            updatedAt: {
-                allowNull: false,
-                type: DataTypes.DATE
             }
         },
         {

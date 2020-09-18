@@ -101,14 +101,12 @@ class UserController {
                 }
             });
             await user.setRoles(userRoles);
-
-            return res.status(201).send(user);
         } else {
-            const adminRole = await Role.findOne({ admin: 'admin' });
+            const adminRole = await Role.findOne({ admin: Role.ADMIN });
             await user.addRole(adminRole);
-
-            return res.status(201).send(user);
         }
+
+        return res.status(HttpStatus.CREATED).send(user);
     }
 }
 module.exports = UserController;

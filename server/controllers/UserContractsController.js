@@ -1,12 +1,20 @@
 const HttpStatus = require('http-status-codes');
-const { Contract } = require('../models');
+const { User, Contract } = require('../models');
 
 class UserContractsController {
     async index(req, res) {
         try {
             const { id } = req.params;
 
-            let contracts = await Contract.findAll({
+            const user = await User.findByPk(id);
+
+            if (!user) {
+                return res.status(HttpStatus.NOT_FOUND).send({
+                    message: 'User not exists!'
+                });
+            }
+
+            const contracts = await Contract.findAll({
                 where: {
                     userId: id
                 }

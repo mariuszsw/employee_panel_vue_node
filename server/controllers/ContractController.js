@@ -2,22 +2,12 @@ const HttpStatus = require('http-status-codes');
 const { Contract } = require('../models');
 
 class ContractController {
-    async delete(req, res) {
-        try {
-            const { id } = req.params;
+    async post(req, res) {
+        const contract = await Contract.create({
+            ...req.body
+        });
 
-            await Contract.destroy({
-                where: {
-                    id
-                }
-            });
-
-            return res.sendStatus(HttpStatus.NO_CONTENT);
-        } catch (error) {
-            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-                error: 'Internal Server Error'
-            });
-        }
+        return res.status(HttpStatus.CREATED).send(contract);
     }
 
     async update(req, res) {
@@ -34,13 +24,9 @@ class ContractController {
                 return res.sendStatus(HttpStatus.FORBIDDEN);
             }
 
-            const updatedContract = await Contract.update(req.body, {
-                where: {
-                    id
-                }
-            });
+            const contractUpdated = await contract.update(req.body);
 
-            return res.send(updatedContract);
+            return res.send(contractUpdated);
         } catch (error) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
                 error: 'Internal Server Error'
@@ -48,14 +34,22 @@ class ContractController {
         }
     }
 
-    async post(req, res) {
-        const contract = await Contract.create({
-            ...req.body,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        });
+    async delete(req, res) {
+        try {
+            const { id } = req.params;
 
-        return res.send(contract);
+            await Contract.destroy({
+                where: {
+                    id
+                }
+            });
+
+            return res.sendStatus(HttpStatus.NO_CONTENT);
+        } catch (error) {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+                error: 'Internal Server Error'
+            });
+        }
     }
 }
 
