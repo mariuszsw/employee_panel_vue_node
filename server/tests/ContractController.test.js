@@ -40,24 +40,22 @@ describe('ContractController', () => {
         users.push(await userFactory.create());
         users.push(await userFactory.create());
 
-        contracts.push(await contractFactory.create(users[0].id));
-        contracts.push(await contractFactory.create(users[1].id));
-        contracts.push(await contractFactory.create(users[2].id));
+        contracts.push(await contractFactory.create({ userId: users[0].id }));
+        contracts.push(await contractFactory.create({ userId: users[1].id }));
+        contracts.push(await contractFactory.create({ userId: users[2].id }));
     });
 
     describe('POST /contracts', () => {
-        it('returns CREATED when sending valid data AS ADMIN', async (done) => {
+        it('returns CREATED when sending valid data AS ADMIN', async () => {
             const contractData = contractFactory.generate({ startDate: '2001-02-02', userId: users[0].id });
 
             const response = await request.post(`/contracts`).set('x-access-token', adminToken).send(contractData);
 
             expect(response.body).toHaveProperty('startDate', contractData.startDate);
             expect(response.statusCode).toEqual(HttpStatuses.CREATED);
-
-            done();
         });
 
-        it('returns BAD_REQUEST sending data contains not valid fields AS ADMIN', async (done) => {
+        it('returns BAD_REQUEST sending data contains not valid fields AS ADMIN', async () => {
             const contractData = await contractFactory.generate({
                 startDate: 'wrongData',
                 duration: 'wrongData',
@@ -86,11 +84,9 @@ describe('ContractController', () => {
             });
 
             expect(response.statusCode).toEqual(HttpStatuses.BAD_REQUEST);
-
-            done();
         });
 
-        it('returns BAD_REQUEST sending invalid data(blank) AS ADMIN', async (done) => {
+        it('returns BAD_REQUEST sending invalid data(blank) AS ADMIN', async () => {
             const contractData = await contractFactory.generate({
                 startDate: null,
                 duration: null,
@@ -119,33 +115,27 @@ describe('ContractController', () => {
             });
 
             expect(response.statusCode).toEqual(HttpStatuses.BAD_REQUEST);
-
-            done();
         });
 
-        it('returns FORBIDDEN when sending valid data AS EMPLOYEE', async (done) => {
+        it('returns FORBIDDEN when sending valid data AS EMPLOYEE', async () => {
             const contractData = contractFactory.generate();
 
             const response = await request.post(`/contracts`).set('x-access-token', userToken).send(contractData);
 
             expect(response.statusCode).toEqual(HttpStatuses.FORBIDDEN);
-
-            done();
         });
 
-        it('returns UNAUTHORIZED when sending valid data WITHOUT TOKEN', async (done) => {
+        it('returns UNAUTHORIZED when sending valid data WITHOUT TOKEN', async () => {
             const contractData = contractFactory.generate();
 
             const response = await request.post(`/contracts`).send(contractData);
 
             expect(response.statusCode).toEqual(HttpStatuses.UNAUTHORIZED);
-
-            done();
         });
     });
 
     describe('PUT /contract/{id}', () => {
-        it('returns OK when put a single contracts AS ADMIN', async (done) => {
+        it('returns OK when put a single contracts AS ADMIN', async () => {
             const contractData = await contractFactory.generate({ startDate: '2020-01-01', userId: users[0].id });
 
             const response = await request
@@ -155,11 +145,9 @@ describe('ContractController', () => {
 
             expect(response.body.startDate).toEqual(contractData.startDate);
             expect(response.statusCode).toEqual(HttpStatuses.OK);
-
-            done();
         });
 
-        it('returns BAD_REQUEST sending invalid data(blank) AS ADMIN', async (done) => {
+        it('returns BAD_REQUEST sending invalid data(blank) AS ADMIN', async () => {
             const contractData = await contractFactory.generate({
                 startDate: null,
                 duration: null,
@@ -191,11 +179,9 @@ describe('ContractController', () => {
             });
 
             expect(response.statusCode).toEqual(HttpStatuses.BAD_REQUEST);
-
-            done();
         });
 
-        it('returns BAD_REQUEST sending data contains not valid fields AS ADMIN', async (done) => {
+        it('returns BAD_REQUEST sending data contains not valid fields AS ADMIN', async () => {
             const contractData = await contractFactory.generate({
                 startDate: 'wrongData',
                 duration: 'wrongData',
@@ -227,11 +213,9 @@ describe('ContractController', () => {
             });
 
             expect(response.statusCode).toEqual(HttpStatuses.BAD_REQUEST);
-
-            done();
         });
 
-        it('returns FORBIDDEN when put a single contract AS EMPLOYEE', async (done) => {
+        it('returns FORBIDDEN when put a single contract AS EMPLOYEE', async () => {
             const contractData = await contractFactory.generate();
 
             const response = await request
@@ -240,11 +224,9 @@ describe('ContractController', () => {
                 .send(contractData);
 
             expect(response.statusCode).toEqual(HttpStatuses.FORBIDDEN);
-
-            done();
         });
 
-        it('returns UNAUTHORIZED when put a single contract WITHOUT TOKEN', async (done) => {
+        it('returns UNAUTHORIZED when put a single contract WITHOUT TOKEN', async () => {
             const contractData = await contractFactory.generate();
 
             const response = await request.put(`/contracts/${contracts[0].id}`).send(contractData);
@@ -253,42 +235,32 @@ describe('ContractController', () => {
                 message: 'No token provided!'
             });
             expect(response.statusCode).toEqual(HttpStatuses.UNAUTHORIZED);
-
-            done();
         });
     });
 
     describe('DELETE /contracts/{id}', () => {
-        it('returns NO_CONTENT when delete not existed contract AS ADMIN', async (done) => {
+        it('returns NO_CONTENT when delete not existed contract AS ADMIN', async () => {
             const response = await request.delete(`/contracts/99999999`).set('x-access-token', adminToken);
 
             expect(response.statusCode).toEqual(HttpStatuses.NO_CONTENT);
-
-            done();
         });
 
-        it('returns NO_CONTENT when delete a single contract AS ADMIN', async (done) => {
+        it('returns NO_CONTENT when delete a single contract AS ADMIN', async () => {
             const response = await request.delete(`/contracts/${contracts[0].id}`).set('x-access-token', adminToken);
 
             expect(response.statusCode).toEqual(HttpStatuses.NO_CONTENT);
-
-            done();
         });
 
-        it('returns FORBIDDEN when delete a single contract AS EMPLOYEE', async (done) => {
+        it('returns FORBIDDEN when delete a single contract AS EMPLOYEE', async () => {
             const response = await request.delete(`/contracts/${contracts[0].id}`).set('x-access-token', userToken);
 
             expect(response.statusCode).toEqual(HttpStatuses.FORBIDDEN);
-
-            done();
         });
 
-        it('returns UNAUTHORIZED when delete a single contract WITHOUT TOKEN', async (done) => {
+        it('returns UNAUTHORIZED when delete a single contract WITHOUT TOKEN', async () => {
             const response = await request.delete(`/contracts/${contracts[0].id}`);
 
             expect(response.statusCode).toEqual(HttpStatuses.UNAUTHORIZED);
-
-            done();
         });
     });
 });

@@ -33,7 +33,7 @@ describe('AuthController', () => {
     });
 
     describe('POST /auth/login', () => {
-        it('return OK if email and password is correct', async (done) => {
+        it('return OK if email and password is correct', async () => {
             const credentials = { email: 'admin@system.test', password: 'password' };
 
             const response = await request.post(`/auth/login`).send(credentials);
@@ -41,11 +41,9 @@ describe('AuthController', () => {
             expect(response.body.user).toMatchObject({ email: 'admin@system.test' });
 
             expect(response.statusCode).toEqual(HttpStatuses.OK);
-
-            done();
         });
 
-        it('returns BAD_REQUEST sending invalid data(blank)', async (done) => {
+        it('returns BAD_REQUEST sending invalid data(blank)', async () => {
             const credentials = { email: null, password: null };
 
             const response = await request.post(`/auth/login`).send(credentials);
@@ -59,28 +57,22 @@ describe('AuthController', () => {
                 message: 'Should not be empty'
             });
             expect(response.statusCode).toEqual(HttpStatuses.BAD_REQUEST);
-
-            done();
         });
 
-        it('return UNAUTHORIZED if password is incorrect', async (done) => {
+        it('return UNAUTHORIZED if password is incorrect', async () => {
             const credentials = { email: 'admin@system.test', password: 'password1' };
 
             const response = await request.post(`/auth/login`).send(credentials);
 
             expect(response.statusCode).toEqual(HttpStatuses.UNAUTHORIZED);
-
-            done();
         });
 
-        it('return UNAUTHORIZED if email is incorrect', async (done) => {
+        it('return UNAUTHORIZED if email is incorrect', async () => {
             const credentials = { email: 'incorrentMail@system.test', password: '1234567' };
 
             const response = await request.post(`/auth/login`).send(credentials);
 
             expect(response.statusCode).toEqual(HttpStatuses.UNAUTHORIZED);
-
-            done();
         });
     });
 });

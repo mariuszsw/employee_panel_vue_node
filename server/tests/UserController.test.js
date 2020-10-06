@@ -40,84 +40,68 @@ describe('UserController', () => {
     });
 
     describe('GET ALL /users', () => {
-        it('returns OK fetching users as ADMIN', async (done) => {
+        it('returns OK fetching users as ADMIN', async () => {
             const response = await request.get(`/users`).set('x-access-token', adminToken);
 
             expect(Object.keys(response.body).length).toEqual(5);
 
             expect(response.statusCode).toEqual(HttpStatuses.OK);
-
-            done();
         });
 
-        it('return FORBIDDEN trying fetch users AS EMPLOYEE', async (done) => {
+        it('return FORBIDDEN trying fetch users AS EMPLOYEE', async () => {
             const response = await request.get(`/users`).set('x-access-token', userToken);
 
             expect(response.statusCode).toEqual(HttpStatuses.FORBIDDEN);
-
-            done();
         });
 
-        it('return UNAUTHORIZED trying fetch users WITHOUT TOKEN', async (done) => {
+        it('return UNAUTHORIZED trying fetch users WITHOUT TOKEN', async () => {
             const response = await request.get(`/users`);
 
             expect(response.statusCode).toEqual(HttpStatuses.UNAUTHORIZED);
-
-            done();
         });
     });
 
     describe('GET /users/{id}', () => {
-        it('returns OK fetching a single user AS ADMIN', async (done) => {
+        it('returns OK fetching a single user AS ADMIN', async () => {
             const response = await request.get(`/users/${users[0].id}`).set('x-access-token', adminToken);
 
             expect(response.body).toHaveProperty('email');
             expect(response.body.email).toEqual(users[0].email);
             expect(response.statusCode).toEqual(HttpStatuses.OK);
-
-            done();
         });
 
-        it('returns NOT_FOUND fetching not existed id AS ADMIN', async (done) => {
+        it('returns NOT_FOUND fetching not existed id AS ADMIN', async () => {
             const response = await request.get(`/users/99999999`).set('x-access-token', adminToken);
 
             expect(response.statusCode).toEqual(HttpStatuses.NOT_FOUND);
-
-            done();
         });
 
-        it('return FORBIDDEN trying fetch a single user AS EMPLOYEE', async (done) => {
+        it('return FORBIDDEN trying fetch a single user AS EMPLOYEE', async () => {
             const userData = UserFactory.generate();
 
             const response = await request.get(`/users/${users[0].id}`).set('x-access-token', userToken).send(userData);
 
             expect(response.statusCode).toEqual(HttpStatuses.FORBIDDEN);
-
-            done();
         });
 
-        it('returns UNAUTHORIZED fetching a single user WITHOUT TOKEN', async (done) => {
+        it('returns UNAUTHORIZED fetching a single user WITHOUT TOKEN', async () => {
             const response = await request.get(`/users/${users[0].id}`);
 
             expect(response.statusCode).toEqual(HttpStatuses.UNAUTHORIZED);
-
-            done();
         });
     });
 
     describe('POST /users', () => {
-        it('returns CREATED when sending valid data AS ADMIN', async (done) => {
+        it('returns CREATED when sending valid data AS ADMIN', async () => {
             const userData = UserFactory.generate();
 
             const response = await request.post(`/users`).set('x-access-token', adminToken).send(userData);
 
             expect(response.body).toHaveProperty('name', userData.name);
             expect(response.statusCode).toEqual(HttpStatuses.CREATED);
-
-            done();
         });
 
-        it('returns BAD_REQUEST sending invalid data(blank) AS ADMIN', async (done) => {
+        it('returns BAD_REQUEST sending invalid data(blank) AS ADMIN', async () => {
             const userData = await UserFactory.generate({ name: null, surname: null, email: null, password: null });
             const response = await request.post(`/users`).set('x-access-token', adminToken).send(userData);
 
@@ -140,11 +124,9 @@ describe('UserController', () => {
             });
 
             expect(response.statusCode).toEqual(HttpStatuses.BAD_REQUEST);
-
-            done();
         });
 
-        it('returns BAD_REQUEST sending already existed email AS ADMIN', async (done) => {
+        it('returns BAD_REQUEST sending already existed email AS ADMIN', async () => {
             await UserFactory.create({ email: `me@me123.com` });
             const userData = await UserFactory.generate({ email: `me@me123.com` });
 
@@ -156,11 +138,9 @@ describe('UserController', () => {
                 message: 'Email address already exists!'
             });
             expect(response.statusCode).toEqual(HttpStatuses.BAD_REQUEST);
-
-            done();
         });
 
-        it('returns BAD_REQUEST sending data contains not valid fields AS ADMIN', async (done) => {
+        it('returns BAD_REQUEST sending data contains not valid fields AS ADMIN', async () => {
             const userData = await UserFactory.generate({
                 name: 'a',
                 surname: 'b',
@@ -189,33 +169,27 @@ describe('UserController', () => {
             });
 
             expect(response.statusCode).toEqual(HttpStatuses.BAD_REQUEST);
-
-            done();
         });
 
-        it('returns FORBIDDEN when sending valid data AS EMPLOYEE', async (done) => {
+        it('returns FORBIDDEN when sending valid data AS EMPLOYEE', async () => {
             const userData = UserFactory.generate();
 
             const response = await request.post(`/users`).set('x-access-token', userToken).send(userData);
 
             expect(response.statusCode).toEqual(HttpStatuses.FORBIDDEN);
-
-            done();
         });
 
-        it('returns UNAUTHORIZED when sending valid data WITHOUT TOKEN', async (done) => {
+        it('returns UNAUTHORIZED when sending valid data WITHOUT TOKEN', async () => {
             const userData = UserFactory.generate();
 
             const response = await request.post(`/users`).send(userData);
 
             expect(response.statusCode).toEqual(HttpStatuses.UNAUTHORIZED);
-
-            done();
         });
     });
 
     describe('PUT /users/{id}', () => {
-        it('returns OK when put a single user AS ADMIN', async (done) => {
+        it('returns OK when put a single user AS ADMIN', async () => {
             const userData = await UserFactory.generate({ email: `test999@me.com` });
 
             const response = await request
@@ -224,11 +198,9 @@ describe('UserController', () => {
                 .send(userData);
 
             expect(response.statusCode).toEqual(HttpStatuses.OK);
-
-            done();
         });
 
-        it('returns BAD_REQUEST sending invalid data(blank) AS ADMIN', async (done) => {
+        it('returns BAD_REQUEST sending invalid data(blank) AS ADMIN', async () => {
             const userData = await UserFactory.generate({ name: null, surname: null, email: null, password: null });
             const response = await request
                 .put(`/users/${users[0].id}`)
@@ -254,11 +226,9 @@ describe('UserController', () => {
             });
 
             expect(response.statusCode).toEqual(HttpStatuses.BAD_REQUEST);
-
-            done();
         });
 
-        it('returns BAD_REQUEST sending already existed email AS ADMIN', async (done) => {
+        it('returns BAD_REQUEST sending already existed email AS ADMIN', async () => {
             await UserFactory.create({ email: `me@me1234.com` });
             const userData = await UserFactory.generate({ email: `me@me1234.com` });
 
@@ -273,11 +243,9 @@ describe('UserController', () => {
                 message: 'Email address already exists!'
             });
             expect(response.statusCode).toEqual(HttpStatuses.BAD_REQUEST);
-
-            done();
         });
 
-        it('returns BAD_REQUEST sending data contains not valid fields AS ADMIN', async (done) => {
+        it('returns BAD_REQUEST sending data contains not valid fields AS ADMIN', async () => {
             const userData = await UserFactory.generate({
                 name: 'a',
                 surname: 'b',
@@ -309,21 +277,17 @@ describe('UserController', () => {
             });
 
             expect(response.statusCode).toEqual(HttpStatuses.BAD_REQUEST);
-
-            done();
         });
 
-        it('returns FORBIDDEN when put a single user AS EMPLOYEE', async (done) => {
+        it('returns FORBIDDEN when put a single user AS EMPLOYEE', async () => {
             const userData = await UserFactory.generate();
 
             const response = await request.put(`/users/${users[0].id}`).set('x-access-token', userToken).send(userData);
 
             expect(response.statusCode).toEqual(HttpStatuses.FORBIDDEN);
-
-            done();
         });
 
-        it('returns UNAUTHORIZED when put a single user WITHOUT TOKEN', async (done) => {
+        it('returns UNAUTHORIZED when put a single user WITHOUT TOKEN', async () => {
             const userData = await UserFactory.generate();
 
             const response = await request.put(`/users/${users[0].id}`).send(userData);
@@ -333,42 +297,32 @@ describe('UserController', () => {
             });
 
             expect(response.statusCode).toEqual(HttpStatuses.UNAUTHORIZED);
-
-            done();
         });
     });
 
     describe('DELETE /users/{id}', () => {
-        it('returns NO_CONTENT when delete not existed single user AS ADMIN', async (done) => {
+        it('returns NO_CONTENT when delete not existed single user AS ADMIN', async () => {
             const response = await request.delete(`/users/99999999`).set('x-access-token', adminToken);
 
             expect(response.statusCode).toEqual(HttpStatuses.NO_CONTENT);
-
-            done();
         });
 
-        it('returns NO_CONTENT when delete a single user AS ADMIN', async (done) => {
+        it('returns NO_CONTENT when delete a single user AS ADMIN', async () => {
             const response = await request.delete(`/users/${users[0].id}`).set('x-access-token', adminToken);
 
             expect(response.statusCode).toEqual(HttpStatuses.NO_CONTENT);
-
-            done();
         });
 
-        it('returns FORBIDDEN when delete a single user AS EMPLOYEE', async (done) => {
+        it('returns FORBIDDEN when delete a single user AS EMPLOYEE', async () => {
             const response = await request.delete(`/users/${users[0].id}`).set('x-access-token', userToken);
 
             expect(response.statusCode).toEqual(HttpStatuses.FORBIDDEN);
-
-            done();
         });
 
-        it('returns UNAUTHORIZED when delete a single user WITHOUT TOKEN', async (done) => {
+        it('returns UNAUTHORIZED when delete a single user WITHOUT TOKEN', async () => {
             const response = await request.delete(`/users/${users[0].id}`);
 
             expect(response.statusCode).toEqual(HttpStatuses.UNAUTHORIZED);
-
-            done();
         });
     });
 });

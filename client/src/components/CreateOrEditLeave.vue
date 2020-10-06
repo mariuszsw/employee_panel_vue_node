@@ -43,11 +43,7 @@
 
                             <v-switch v-if="isBoardAdmin" v-model="selectedItem.approved" />
 
-                            <v-alert
-                                :value="validationerror"
-                                color="error"
-                                v-html="error"
-                            >{{ errorMessage }}</v-alert>
+                            <v-alert :value="validationerror" color="error" v-html="error">{{ errorMessage }}</v-alert>
                         </v-row>
                     </v-container>
                 </v-card-text>

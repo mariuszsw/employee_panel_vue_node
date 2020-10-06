@@ -19,6 +19,8 @@ const contracts = [];
 
 let userToken;
 let adminToken;
+let userResponse;
+let adminResponse;
 
 describe('UserContractController', () => {
     afterAll(async () => {
@@ -30,66 +32,63 @@ describe('UserContractController', () => {
         await truncateDatabase();
         await runSeeders();
 
-        const userResponse = await loginAsUser(request);
-        const adminResponse = await loginAsAdmin(request);
+        userResponse = await loginAsUser(request);
+        adminResponse = await loginAsAdmin(request);
 
         userToken = userResponse.body.token;
         adminToken = adminResponse.body.token;
 
+        loggedUserId = userResponse.body.user.id;
+        loggedAdminId = adminResponse.body.user.id;
+
         users.push(await userFactory.create());
         users.push(await userFactory.create());
         users.push(await userFactory.create());
 
-        contracts.push(await contractFactory.create(users[0].id));
-        contracts.push(await contractFactory.create(users[0].id));
-        contracts.push(await contractFactory.create(users[1].id));
-        contracts.push(await contractFactory.create(users[2].id));
+        contracts.push(await contractFactory.create({ userId: loggedUserId }));
+        contracts.push(await contractFactory.create({ userId: loggedUserId }));
+        contracts.push(await contractFactory.create({ userId: loggedAdminId }));
+        contracts.push(await contractFactory.create({ userId: loggedAdminId }));
     });
 
     describe('GET /users/{id}/contracts/', () => {
-        it('returns OK fetching user contracts AS ADMIN', async (done) => {
-            const userId = users[0].id;
-
-            const response = await request.get(`/users/${userId}/contracts`).set('x-access-token', adminToken);
+        it('returns OK fetching user contracts AS ADMIN', async () => {
+            const response = await request.get(`/users/${loggedAdminId}/contracts`).set('x-access-token', adminToken);
 
             expect(response.body.length).toEqual(2);
-            expect(response.body[0].userId).toEqual(userId);
-            expect(response.body[0].userId).toEqual(userId);
-            expect(response.body[1].userId).toEqual(userId);
-            expect(response.statusCode).toEqual(HttpStatuses.OK);
+            expect(response.body[0].userId).toEqual(loggedAdminId);
+            expect(response.body[1].userId).toEqual(loggedAdminId);
 
-            done();
+            expect(response.statusCode).toEqual(HttpStatuses.OK);
         });
 
-        it('return OK trying fetch user contracts AS EMPLOYEE', async (done) => {
-            const userId = users[0].id;
-            const contractData = contractFactory.generate();
-
-            const response = await request.get(`/users/${userId}/contracts`).set('x-access-token', userToken);
+        it('return OK trying fetch user contracts AS EMPLOYEE', async () => {
+            const response = await request.get(`/users/${loggedUserId}/contracts`).set('x-access-token', userToken);
 
             expect(response.body.length).toEqual(2);
-            expect(response.body[0].userId).toEqual(userId);
-            expect(response.body[0].userId).toEqual(userId);
-            expect(response.body[1].userId).toEqual(userId);
+            expect(response.body[0].userId).toEqual(loggedUserId);
+            expect(response.body[1].userId).toEqual(loggedUserId);
             expect(response.statusCode).toEqual(HttpStatuses.OK);
-
-            done();
         });
 
-        it('returns NOT_FOUND when fetching user contracts of non existing USER as ADMIN', async (done) => {
+        it('returns NOT_FOUND when fetching user contracts of non existing USER as ADMIN', async () => {
             const response = await request.get(`/users/99999999/contracts`).set('x-access-token', adminToken);
 
             expect(response.statusCode).toEqual(HttpStatuses.NOT_FOUND);
-
-            done();
         });
 
-        it('returns UNAUTHORIZED fetching user contracts WITHOUT TOKEN', async (done) => {
+        it('returns FORBIDDEN requesting other user contracts as EMPLOYEE', async () => {
+            const userId = users[0].id;
+
+            const response = await request.get(`/users/${userId}/contracts`).set('x-access-token', userToken);
+
+            expect(response.statusCode).toEqual(HttpStatuses.FORBIDDEN);
+        });
+
+        it('returns UNAUTHORIZED fetching user contracts WITHOUT TOKEN', async () => {
             const response = await request.get(`/users/${users[0].id}/contracts`);
 
             expect(response.statusCode).toEqual(HttpStatuses.UNAUTHORIZED);
-
-            done();
         });
     });
 });

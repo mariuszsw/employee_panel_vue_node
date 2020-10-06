@@ -2,7 +2,7 @@ import Api from '@/services/Api';
 
 class UserContractsService {
     index(userId) {
-        return Api.get(`users/${userId}/contracts`);
+        return Api.get(`/users/${userId}/contracts`);
     }
 }
 

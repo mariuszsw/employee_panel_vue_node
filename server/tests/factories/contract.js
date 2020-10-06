@@ -8,7 +8,7 @@ class contractFactory {
             startDate: faker.date.future(),
             duration: 12,
             leave: 26,
-            userId: props
+            userId: 1
         };
 
         return Object.assign({}, defaultProps, props);

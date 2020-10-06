@@ -2,7 +2,7 @@ import Api from '@/services/Api';
 
 class UserLeavesService {
     index(userId) {
-        return Api.get(`leaves/users/${userId}/leaves`);
+        return Api.get(`/users/${userId}/leaves`);
     }
 }
 

@@ -6,6 +6,14 @@ class UserContractsController {
         try {
             const { id } = req.params;
 
+            const isAdmin = await req.loggedUser.isAdmin();
+
+            if (!isAdmin && req.loggedUserId !== parseInt(id)) {
+                return res.status(HttpStatus.FORBIDDEN).send({
+                    message: 'Wrong user id!'
+                });
+            }
+
             const user = await User.findByPk(id);
 
             if (!user) {

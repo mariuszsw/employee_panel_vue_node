@@ -2,14 +2,14 @@ import Api from '@/services/Api';
 
 class LeaveService {
     delete(leaveId) {
-        return Api.delete(`leaves/${leaveId}`);
+        return Api.delete(`/leaves/${leaveId}`);
     }
 
     save(leave) {
         if (leave.id) {
-            return Api.put(`leaves/${leave.id}`, leave);
+            return Api.put(`/leaves/${leave.id}`, leave);
         } else {
-            return Api.post(`leaves`, leave);
+            return Api.post(`/leaves`, leave);
         }
     }
 }
