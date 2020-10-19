@@ -16,9 +16,8 @@
                             <v-card-subtitle class="pb-20"></v-card-subtitle>
 
                             <v-card-text class="text--primary">
-                                FIRST NAME: {{ currentUser.name }}
-                                LAST NAME: {{ currentUser.surname }}
-                                EMAIL: {{ currentUser.email }}
+                                FIRST NAME: {{ currentUser.name }} LAST NAME: {{ currentUser.surname }} EMAIL:
+                                {{ currentUser.email }}
                             </v-card-text>
                         </v-card>
                     </v-col>
@@ -44,5 +43,4 @@ export default {
     }
 };
 </script>
-<style scoped>
-</style>
+<style scoped></style>

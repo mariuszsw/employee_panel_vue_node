@@ -1,15 +1,12 @@
 <template>
     <div class="container">
-        <CreateOrEditContract
-            :is-open.sync="isOpenCreateOrEditDialog"
-            :selected-object.sync="selectedItem"
-        />
+        <CreateOrEditContract :is-open.sync="isOpenCreateOrEditDialog" :selected-object.sync="selectedItem" />
 
         <div id="app">
             <v-app id="inspire">
                 <v-data-table
                     :headers="headers"
-                    :items="contracts"
+                    :items="this.$store.state.contracts.contracts"
                     sort-by="createdAt"
                     class="elevation-1"
                 >
@@ -18,12 +15,9 @@
                             <v-toolbar-title>CONTRACTS</v-toolbar-title>
                             <v-divider class="mx-4" inset vertical></v-divider>
                             <v-spacer></v-spacer>
-                            <v-btn
-                                color="primary"
-                                dark
-                                class="mb-2"
-                                @click="onOpenCreateOrUpdateDialog()"
-                            >New Contract</v-btn>
+                            <v-btn color="primary" dark class="mb-2" @click="onOpenCreateOrUpdateDialog()"
+                                >New Contract</v-btn
+                            >
                         </v-toolbar>
                     </template>
 
@@ -70,7 +64,6 @@ export default {
             },
             errorMessage: '',
             error: null,
-            contracts: [],
             isOpenCreateOrEditDialog: false,
 
             isDialogDeleteVisible: false,
@@ -90,19 +83,6 @@ export default {
 
     created() {
         this.selectedItem = { ...this.defaultItem };
-    },
-
-    async mounted() {
-        try {
-            const { userId } = this.$route.params;
-
-            this.contracts = await this.getContracts(userId);
-        } catch (error) {
-            this.errorMessage =
-                (error.response && error.response.data ? error.response.data : null) ||
-                error.message ||
-                error.toString();
-        }
     },
 
     watch: {

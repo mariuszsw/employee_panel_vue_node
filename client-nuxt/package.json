@@ -10,9 +10,20 @@
     "test": "jest"
   },
   "dependencies": {
+    "@nuxtjs/auth": "^4.9.1",
     "@nuxtjs/axios": "^5.12.2",
+    "cookie": "^0.4.1",
+    "cookie-parser": "^1.4.5",
+    "cookie-universal-nuxt": "^2.1.4",
     "core-js": "^3.6.5",
-    "nuxt": "^2.14.5"
+    "js-cookie": "^2.2.1",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.1",
+    "next-cookies": "^2.0.3",
+    "nuxt": "^2.14.5",
+    "nuxt-material-design-icons-iconfont": "^1.0.2",
+    "vue-cookies": "^1.7.4",
+    "vuelidate": "^0.7.5"
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.11.2",

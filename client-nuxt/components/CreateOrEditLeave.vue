@@ -1,4 +1,3 @@
-
 <template v-slot:top>
     <v-toolbar flat color="white">
         <v-dialog v-model="open" max-width="500px">
@@ -58,12 +57,12 @@
     </v-toolbar>
 </template>
 
-
 <script>
 import LeaveService from '../services/LeaveService.js';
 import { mapGetters } from 'vuex';
 import { validationMixin } from 'vuelidate';
 import { required } from 'vuelidate/lib/validators';
+import { mapActions } from 'vuex';
 import moment from 'moment';
 import UserLeavesService from '../services/UserLeavesService.js';
 
@@ -114,9 +113,9 @@ export default {
 
     computed: {
         ...mapGetters({
-            isAuthenticated: 'auth/isAuthenticated',
-            isAdmin: 'auth/isAdmin',
-            isUser: 'auth/sUser',
+            isAuthenticated: 'authentication/isAuthenticated',
+            isAdmin: 'authentication/isAdmin',
+            isUser: 'authentication/isUser',
             currentUser: 'users/getUser'
         }),
         open: {
@@ -179,6 +178,10 @@ export default {
     },
 
     methods: {
+        ...mapActions({
+            saveLeave: 'leaves/saveLeave'
+        }),
+
         async isStartDate(value) {
             if (!this.selectedItem.id) {
                 const { userId } = this.$route.params;
@@ -195,8 +198,8 @@ export default {
 
         async isEndDate(value) {
             if (!this.selectedItem.id) {
-                const { userId } = this.$route.params;
-                const { data } = await UserLeavesService.index(userId);
+                const { id } = this.$route.params;
+                const { data } = await UserLeavesService.index(id);
 
                 for (let i = 0; i < data.length; i++) {
                     if (moment(value).isBetween(data[i].start, data[i].end, '[]')) {
@@ -210,28 +213,15 @@ export default {
         clearServerErrors(type) {
             this.serverErrors[type] = [];
         },
-        // isBoardAdmin() {
-        //     return this.currentUser && this.isAdmin;
-        // },
+
         close() {
             this.open = false;
             this.selectedItem = { ...this.defaultItem };
         },
 
         async onSave() {
-            if (this.selectedItem.id) {
-                const index = this.leaves.findIndex((contract) => contract.id === this.selectedItem.id);
-
-                const { data } = await LeaveService.save(this.selectedItem);
-
-                this.leaves.splice(index, 1, data);
-            } else {
-                this.selectedItem.userId = this.$route.params.userId;
-
-                const { data } = await LeaveService.save(this.selectedItem);
-
-                this.leaves.push(data);
-            }
+            this.selectedItem.userId = this.$route.params.id;
+            this.saveLeave(this.selectedItem);
 
             this.close();
         },

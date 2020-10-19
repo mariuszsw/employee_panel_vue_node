@@ -4,7 +4,7 @@
             <v-app id="inspire">
                 <v-data-table
                     :headers="headers"
-                    :items="contracts"
+                    :items="this.$store.state.contracts"
                     sort-by="createdAt"
                     class="elevation-1"
                 >
@@ -54,19 +54,6 @@ export default {
         ...mapGetters({
             currentUser: 'users/getUser'
         })
-    },
-
-    async mounted() {
-        try {
-            const { userId } = this.$route.params;
-            const { data } = await UserContractsService.index(userId);
-            this.contracts = data;
-        } catch (error) {
-            this.errorMessage =
-                (error.response && error.response.data ? error.response.data : null) ||
-                error.message ||
-                error.toString();
-        }
     },
 
     methods: {

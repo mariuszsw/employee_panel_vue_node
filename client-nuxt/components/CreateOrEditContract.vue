@@ -113,7 +113,6 @@ export default {
             errorMessage: '',
             error: null,
             validationError: false,
-
             birthdateButton: false,
             isCreateOrUpdateDialogVisible: false
         };
@@ -198,7 +197,7 @@ export default {
         },
 
         async onSave() {
-            this.selectedItem.userId = this.$route.params.userId;
+            this.selectedItem.userId = this.$route.params.id;
             this.saveContract(this.selectedItem);
 
             this.close();
@@ -210,8 +209,8 @@ export default {
 
         async isStartDate(value) {
             if (!this.selectedItem.id) {
-                const { userId } = this.$route.params;
-                const { data } = await UserContractsService.index(userId);
+                const { id } = this.$route.params;
+                const { data } = await UserContractsService.index(id);
 
                 for (let i = 0; i < data.length; i++) {
                     if (

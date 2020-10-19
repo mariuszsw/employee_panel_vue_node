@@ -47,7 +47,7 @@
                                     offset-y
                                     min-width="290px"
                                 >
-                                    <template v-slot:activator="{on, attrs }">
+                                    <template v-slot:activator="{ on, attrs }">
                                         <v-text-field
                                             v-model="selectedItem.birthdate"
                                             label="Birthday date"
@@ -98,11 +98,7 @@
                                     @keyup="clearServerErrors('password')"
                                 />
                             </v-col>
-                            <v-alert
-                                :value="validationError"
-                                color="error"
-                                v-html="error"
-                            >{{ errorMessage }}</v-alert>
+                            <v-alert :value="validationError" color="error" v-html="error">{{ errorMessage }}</v-alert>
                         </v-row>
                     </v-container>
                 </v-card-text>
@@ -116,7 +112,6 @@
         </v-dialog>
     </v-row>
 </template>
-
 
 <script>
 import { validationMixin } from 'vuelidate';

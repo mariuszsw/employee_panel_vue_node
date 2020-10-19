@@ -1,14 +1,15 @@
 <template>
     <div>
-        <Login />
+        <Nuxt />
+        <User />
     </div>
 </template>
 
 <script>
-import Login from '~/components/Login.vue';
+import User from '~/components/User.vue';
 export default {
     components: {
-        Login
+        User
     }
 };
 </script>

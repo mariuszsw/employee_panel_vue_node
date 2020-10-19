@@ -1,6 +1,6 @@
 <template>
     <v-app id="inspire">
-        <v-content>
+        <v-main>
             <v-container class="fill-height" fluid>
                 <v-row align="center" justify="center">
                     <v-col cols="12" sm="8" md="4">
@@ -66,7 +66,7 @@
                     </v-col>
                 </v-row>
             </v-container>
-        </v-content>
+        </v-main>
     </v-app>
 </template>
 
@@ -75,6 +75,7 @@ import { validationMixin } from 'vuelidate';
 import { required, minLength, maxLength, email } from 'vuelidate/lib/validators';
 import { mapActions } from 'vuex';
 import AuthService from '@/services/AuthService';
+import Api from '@/services/Api';
 
 export default {
     props: {
@@ -132,15 +133,16 @@ export default {
     },
     methods: {
         ...mapActions({
-            login: 'auth/login'
+            login: 'authentication/login'
         }),
 
         async onLogin() {
             try {
-                const { data } = await AuthService.login(this.credentials);
+                const { data } = await this.$auth.loginWith('local', { data: this.credentials });
+
+                Api.defaults.headers = { 'x-access-token': data.token };
 
                 this.login(data);
-
                 this.$router.push('/user');
             } catch (error) {
                 this.$notify({

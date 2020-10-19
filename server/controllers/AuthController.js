@@ -6,7 +6,7 @@ const { Op } = require('sequelize');
 
 class AuthController {
     jwtRegUser(user) {
-        return jwt.sign({ id: user.id }, config.authentication.jwtSecret, {
+        return jwt.sign({ id: user.id, user: user }, config.authentication.jwtSecret, {
             expiresIn: '10h'
         });
     }
@@ -52,7 +52,7 @@ class AuthController {
 
             return res.status(HttpStatus.OK).send({
                 user: loggedUser,
-                token: this.jwtRegUser(user.toJSON())
+                token: this.jwtRegUser(loggedUser.toJSON())
             });
         } catch (error) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({

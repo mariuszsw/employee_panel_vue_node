@@ -1,22 +1,15 @@
 <template>
     <div class="container">
-        <CreateOrEditEmployee
-            :is-open.sync="isCreateOrEditVisable"
-            :selected-object.sync="selectedItem"
-        />
+        <CreateOrEditEmployee :is-open.sync="isCreateOrEditVisable" :selected-object.sync="selectedItem" />
 
-        <ConfirmDeleteUser
-            :is-open.sync="isDialogDeleteVisible"
-            @closeDialog="close"
-            @confirmDelete="onDelete()"
-        />
+        <ConfirmDeleteUser :is-open.sync="isDialogDeleteVisible" @closeDialog="close" @confirmDelete="onDelete()" />
 
         <header class="jumbotron">
             <div id="app">
                 <v-app id="inspire">
                     <v-data-table
                         :headers="headers"
-                        :items="users"
+                        :items="this.$store.state.users.users"
                         sort-by="createdAt"
                         class="elevation-1"
                     >
@@ -26,20 +19,13 @@
                                 <v-divider class="mx-4" inset vertical></v-divider>
                                 <v-spacer />
 
-                                <v-btn
-                                    color="primary"
-                                    dark
-                                    class="mb-2"
-                                    @click="onOpenCreateOrUpdateDialog()"
-                                >New Employee</v-btn>
+                                <v-btn color="primary" dark class="mb-2" @click="onOpenCreateOrUpdateDialog()"
+                                    >New Employee</v-btn
+                                >
                             </v-toolbar>
                         </template>
                         <template v-slot:item.actions="{ item }">
-                            <v-icon
-                                small
-                                class="mr-2"
-                                @click="onOpenCreateOrUpdateDialog(item)"
-                            >mdi-pencil</v-icon>
+                            <v-icon small class="mr-2" @click="onOpenCreateOrUpdateDialog(item)">mdi-pencil</v-icon>
                             <v-icon small @click="showDeleteDialog(item)">mdi-delete</v-icon>
                             <v-icon middle @click="goToRouteContracts(item)">play_arrow</v-icon>
                         </template>
@@ -73,7 +59,6 @@ export default {
         return {
             selectedItem: {},
 
-            users: [],
             isCreateOrEditVisable: false,
             isDialogDeleteVisible: false,
 
@@ -100,21 +85,9 @@ export default {
         this.selectedItem = { ...this.defaultItem };
     },
 
-    async mounted() {
-        try {
-            this.users = await this.getUsers();
-        } catch (error) {
-            this.content =
-                (error.response && error.response.data ? error.response.data : null) ||
-                error.message ||
-                error.toString();
-        }
-    },
-
     methods: {
         ...mapActions({
-            removeUser: 'users/removeUser',
-            getUsers: 'users/getUsers'
+            removeUser: 'users/removeUser'
         }),
 
         onDelete() {

@@ -20,7 +20,7 @@ export default {
     },
     methods: {
         ...mapActions({
-            tryAutoLogin: 'tryAutoLogin'
+            tryAutoLogin: 'auth/tryAutoLogin'
         })
     },
     created() {

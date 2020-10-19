@@ -6,5 +6,4 @@ const instance = axios.create({
 });
 instance.defaults.headers = authHeader();
 
-
 export default instance;
